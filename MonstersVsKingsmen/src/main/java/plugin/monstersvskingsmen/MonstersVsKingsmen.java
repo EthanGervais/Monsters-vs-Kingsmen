@@ -1,8 +1,9 @@
 package plugin.monstersvskingsmen;
 
-import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,7 +11,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import plugin.classes.*;
+
 public final class MonstersVsKingsmen extends JavaPlugin implements Listener{
+	private KingClass king = new KingClass();
+	
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
@@ -25,9 +30,22 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener{
 	public void onPlayerInteractBlock(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		PlayerInventory inventory = player.getInventory();
-		if(inventory.getItemInMainHand().getType() == Material.FISHING_ROD) {
-			getLogger().info("TEST");
-			player.getWorld().strikeLightning(player.getTargetBlock((Set<Material>) null, 200).getLocation());
+		if(inventory.getItemInMainHand().getType() == Material.SLIME_BALL) {
+			king.thorsHammer(player);
+		}else if(inventory.getItemInMainHand().getType() == Material.PUFFERFISH_SPAWN_EGG) {
+			event.setCancelled(true);
+			king.giveItems(player);
 		}
+	}
+	
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if(sender instanceof Player) {
+			Player player = (Player) sender;
+			if(player.isOp() && cmd.getName().equalsIgnoreCase("startgame")) {
+				SetUpLobby setup = new SetUpLobby();
+				setup.assignRoles();
+			}
+		}
+		return true;
 	}
 }
