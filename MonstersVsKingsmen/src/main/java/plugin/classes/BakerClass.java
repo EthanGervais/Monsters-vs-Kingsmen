@@ -1,12 +1,7 @@
 package plugin.classes;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -19,5 +14,4 @@ public class BakerClass {
 		inventory.addItem(seedStack);
 		inventory.addItem(coalStack);
 	}
-
 }

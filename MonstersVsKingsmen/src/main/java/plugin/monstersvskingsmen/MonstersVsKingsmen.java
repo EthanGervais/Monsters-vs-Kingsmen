@@ -1,7 +1,5 @@
 package plugin.monstersvskingsmen;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Hashtable;
 
 import org.bukkit.Material;
@@ -14,9 +12,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,6 +26,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private ZatrickClass zatrick = new ZatrickClass();
 	private HotTubClass hottub = new HotTubClass();
 	private BuilderClass builder = new BuilderClass();
+	private BakerClass baker = new BakerClass();
+	
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
 	@Override
@@ -114,8 +112,14 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				event.setCancelled(true);
 				builder.giveItems(player);
 		}
+		
+		// Baker Class
+		if (inventory.getItemInMainHand().getType() == Material.ZOGLIN_SPAWN_EGG) {
+			event.setCancelled(true);
+			baker.giveItems(player);
+		}
 	}
-
+	
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
@@ -129,20 +133,6 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			drills = builder.getDrills();
 			Drill drill = drills.get(event.getPlayer().getDisplayName());
 			drill.setPlaced(false);
-		}
-	}
-
-	@EventHandler
-	public void onFurnaceSmelt(FurnaceSmeltEvent event) {
-		ArrayList<ItemStack> outputFood = new ArrayList<ItemStack>();
-		outputFood.add(new ItemStack(Material.CAKE, 1));
-		outputFood.add(new ItemStack(Material.COOKIE, 1));
-		outputFood.add(new ItemStack(Material.BREAD, 1));
-
-		Collections.shuffle(outputFood);
-
-		if (event.getSource().getType() == Material.WHEAT) {
-			event.setResult(new ItemStack(outputFood.get(0)));
 		}
 	}
 
