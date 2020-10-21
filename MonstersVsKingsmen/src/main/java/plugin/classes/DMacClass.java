@@ -1,7 +1,5 @@
 package plugin.classes;
 
-import java.util.List;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -19,9 +17,7 @@ public class DMacClass {
 	}
 
 	public void aoeEffect(Player player) {
-		List<Entity> list = player.getNearbyEntities(10, 10, 10);
-		
-		for(Entity entity : list) {
+		for(Entity entity : player.getNearbyEntities(10, 10, 10)) {
 			if(entity instanceof Player) {
 				Player newPlayer = (Player) entity;
 				newPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 200, 2));
