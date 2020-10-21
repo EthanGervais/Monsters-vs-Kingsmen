@@ -1,11 +1,15 @@
 package plugin.monstersvskingsmen;
 
+import java.util.Hashtable;
+
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -13,6 +17,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import plugin.classes.*;
+import plugin.activatedBlock.*;
 
 public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private KingClass king = new KingClass();
@@ -20,6 +25,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private DMacClass dmac = new DMacClass();
 	private ZatrickClass zatrick = new ZatrickClass();
 	private HotTubClass hottub = new HotTubClass();
+	private BuilderClass builder = new BuilderClass();
+	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
 	@Override
 	public void onEnable() {
@@ -80,12 +87,33 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			event.setCancelled(true);
 			hottub.giveItems(player);
 		}
+		
+		if(inventory.getItemInMainHand().getType() == Material.STONECUTTER) {
+			if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				drills = builder.getDrills();
+				Drill drill = drills.get(player.getDisplayName());
+				if(drill.isPlaced()) {
+					drill.openDrill(player);
+				}else {
+					drill.setPlaced(true);
+				}
+			}
+		}
 	}
 
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
 			event.setDamage(2.5);
+		}
+	}
+	
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
+		if(event.getBlock().getType() == Material.STONECUTTER) {
+			drills = builder.getDrills();
+			Drill drill = drills.get(event.getPlayer().getDisplayName());
+			drill.setPlaced(false);
 		}
 	}
 
