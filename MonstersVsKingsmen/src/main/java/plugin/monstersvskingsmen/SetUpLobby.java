@@ -28,6 +28,18 @@ public class SetUpLobby {
 		meta.setDisplayName("Peenut");
 		stack.setItemMeta(meta);
 		nobleItems.add(stack);
+		
+		stack = new ItemStack(Material.SALMON_SPAWN_EGG, 1);
+		meta = stack.getItemMeta();
+		meta.setDisplayName("DMac");
+		stack.setItemMeta(meta);
+		nobleItems.add(stack);
+
+		stack = new ItemStack(Material.MOOSHROOM_SPAWN_EGG, 1);
+		meta = stack.getItemMeta();
+		meta.setDisplayName("Zatrick");
+		stack.setItemMeta(meta);
+		nobleItems.add(stack);
 
 		stack = new ItemStack(Material.ENDERMAN_SPAWN_EGG, 1);
 		meta = stack.getItemMeta();
