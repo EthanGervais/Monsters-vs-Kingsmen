@@ -106,10 +106,10 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				drills = builder.getDrills();
 				Drill drill = drills.get(player.getDisplayName());
 				drill.openDrill(player);
-			} else if (inventory.getItemInMainHand().getType() == Material.ENDERMAN_SPAWN_EGG) {
+			}
+		} else if (inventory.getItemInMainHand().getType() == Material.ENDERMAN_SPAWN_EGG) {
 				event.setCancelled(true);
 				builder.giveItems(player);
-			}
 		}
 
 	}
