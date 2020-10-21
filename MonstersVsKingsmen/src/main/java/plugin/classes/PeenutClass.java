@@ -17,6 +17,8 @@ public class PeenutClass {
 	}
 
 	public void fireBall(Player player) {
-		player.getWorld().getBlockAt(player.getTargetBlock((Set<Material>) null, 200).getLocation()).getRelative(BlockFace.UP).setType(Material.FIRE);
+		if (player.getWorld().getBlockAt(player.getTargetBlock((Set<Material>) null, 200).getLocation().add(0, 1, 0)).getType() == Material.AIR) {
+			player.getWorld().getBlockAt(player.getTargetBlock((Set<Material>) null, 200).getLocation()).getRelative(BlockFace.UP).setType(Material.FIRE);
+		}
 	}
 }
