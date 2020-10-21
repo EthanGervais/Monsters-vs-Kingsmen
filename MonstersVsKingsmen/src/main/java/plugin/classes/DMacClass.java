@@ -1,5 +1,32 @@
 package plugin.classes;
 
-public class DMacClass {
+import java.util.List;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+public class DMacClass {
+	public void giveItems(Player player) {
+		Inventory inventory = player.getInventory();
+		ItemStack stack = new ItemStack(Material.END_CRYSTAL, 1);
+		inventory.remove(Material.SALMON_SPAWN_EGG);
+		inventory.addItem(stack);
+	}
+
+	public void aoeEffect(Player player) {
+		List<Entity> list = player.getNearbyEntities(10, 10, 10);
+		
+		for(Entity entity : list) {
+			if(entity instanceof Player) {
+				Player newPlayer = (Player) entity;
+				newPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 200, 2));
+				newPlayer.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 2));
+			}
+		}
+	}
 }
