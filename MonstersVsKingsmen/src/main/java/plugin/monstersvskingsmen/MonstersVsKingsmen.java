@@ -33,6 +33,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
+		baker.addFurnaceRecipe(this);
 	}
 
 	@Override
