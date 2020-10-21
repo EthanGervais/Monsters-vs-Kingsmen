@@ -19,6 +19,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private PeenutClass peenut = new PeenutClass();
 	private DMacClass dmac = new DMacClass();
 	private ZatrickClass zatrick = new ZatrickClass();
+	private HotTubClass hottub = new HotTubClass();
 
 	@Override
 	public void onEnable() {
@@ -37,6 +38,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		
 		// King Class
 		if (inventory.getItemInMainHand().getType() == Material.SLIME_BALL) {
+			event.setCancelled(true);
 			king.thorsHammer(player);
 		} else if (inventory.getItemInMainHand().getType() == Material.PUFFERFISH_SPAWN_EGG) {
 			event.setCancelled(true);
@@ -45,6 +47,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 
 		// Peenut Class
 		if (inventory.getItemInMainHand().getType() == Material.BLAZE_POWDER) {
+			event.setCancelled(true);
 			peenut.fireBall(player);
 		} else if (inventory.getItemInMainHand().getType() == Material.TURTLE_SPAWN_EGG) {
 			event.setCancelled(true);
@@ -53,6 +56,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		
 		// DMac Class
 		if (inventory.getItemInMainHand().getType() == Material.END_CRYSTAL) {
+			event.setCancelled(true);
 			dmac.aoeEffect(player);
 		} else if (inventory.getItemInMainHand().getType() == Material.SALMON_SPAWN_EGG) {
 			event.setCancelled(true);
@@ -61,10 +65,20 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		
 		// Zatrick Class
 		if (inventory.getItemInMainHand().getType() == Material.CRIMSON_ROOTS) {
+			event.setCancelled(true);
 			zatrick.needHealing(player);;
 		} else if (inventory.getItemInMainHand().getType() == Material.MOOSHROOM_SPAWN_EGG) {
 			event.setCancelled(true);
 			zatrick.giveItems(player);
+		}
+		
+		// HotTub Class
+		if (inventory.getItemInMainHand().getType() == Material.DRAGON_HEAD) {
+			event.setCancelled(true);
+			hottub.invisibility(player);;
+		} else if (inventory.getItemInMainHand().getType() == Material.ENDERMITE_SPAWN_EGG) {
+			event.setCancelled(true);
+			hottub.giveItems(player);
 		}
 	}
 

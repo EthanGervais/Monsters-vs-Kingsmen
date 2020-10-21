@@ -40,6 +40,12 @@ public class SetUpLobby {
 		meta.setDisplayName("Zatrick");
 		stack.setItemMeta(meta);
 		nobleItems.add(stack);
+		
+		stack = new ItemStack(Material.ENDERMITE_SPAWN_EGG, 1);
+		meta = stack.getItemMeta();
+		meta.setDisplayName("HotTub");
+		stack.setItemMeta(meta);
+		nobleItems.add(stack);
 
 		stack = new ItemStack(Material.ENDERMAN_SPAWN_EGG, 1);
 		meta = stack.getItemMeta();
