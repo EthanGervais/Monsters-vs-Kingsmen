@@ -17,13 +17,13 @@ public class DMacClass {
 	}
 
 	public void aoeEffect(Player player) {
-		player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 400, 2));
-		player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 400, 2));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 400, 1));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 400, 1));
 		for(Entity entity : player.getNearbyEntities(10, 10, 10)) {
 			if(entity instanceof Player) {
 				Player newPlayer = (Player) entity;
-				newPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 400, 2));
-				newPlayer.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 400, 2));
+				newPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 400, 1));
+				newPlayer.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 400, 1));
 			}
 		}
 	}
