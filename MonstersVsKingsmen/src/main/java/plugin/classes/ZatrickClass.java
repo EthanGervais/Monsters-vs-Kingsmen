@@ -17,11 +17,11 @@ public class ZatrickClass {
 	}
 	
 	public void needHealing(Player player) {
-		player.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 20, 2));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 400, 1));
 		for (Entity entity : player.getNearbyEntities(10, 10, 10)) {
 			if (entity instanceof Player) {
 				Player newPlayer = (Player) entity;
-				newPlayer.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 20, 2));
+				newPlayer.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 400, 1));
 			}
 		}
 	}
