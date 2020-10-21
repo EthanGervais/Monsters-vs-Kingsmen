@@ -102,8 +102,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				drill.setPlaced(true);
 			}
 		} else if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.STONECUTTER) {
-			event.setCancelled(true);
 			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				event.setCancelled(true);
 				drills = builder.getDrills();
 				if(drills.containsKey(player.getDisplayName())) {
 					Drill drill = drills.get(player.getDisplayName());
