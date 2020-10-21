@@ -1,5 +1,7 @@
 package plugin.monstersvskingsmen;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 
 import org.bukkit.Material;
@@ -12,7 +14,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -42,7 +46,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	public void onPlayerInteractBlock(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		PlayerInventory inventory = player.getInventory();
-		
+
 		// King Class
 		if (inventory.getItemInMainHand().getType() == Material.SLIME_BALL) {
 			event.setCancelled(true);
@@ -60,7 +64,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			event.setCancelled(true);
 			peenut.giveItems(player);
 		}
-		
+
 		// DMac Class
 		if (inventory.getItemInMainHand().getType() == Material.END_CRYSTAL) {
 			event.setCancelled(true);
@@ -69,36 +73,45 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			event.setCancelled(true);
 			dmac.giveItems(player);
 		}
-		
+
 		// Zatrick Class
 		if (inventory.getItemInMainHand().getType() == Material.CRIMSON_ROOTS) {
 			event.setCancelled(true);
-			zatrick.needHealing(player);;
+			zatrick.needHealing(player);
+			;
 		} else if (inventory.getItemInMainHand().getType() == Material.MOOSHROOM_SPAWN_EGG) {
 			event.setCancelled(true);
 			zatrick.giveItems(player);
 		}
-		
+
 		// HotTub Class
 		if (inventory.getItemInMainHand().getType() == Material.DRAGON_HEAD) {
 			event.setCancelled(true);
-			hottub.invisibility(player);;
+			hottub.invisibility(player);
+			;
 		} else if (inventory.getItemInMainHand().getType() == Material.ENDERMITE_SPAWN_EGG) {
 			event.setCancelled(true);
 			hottub.giveItems(player);
 		}
-		
-		if(inventory.getItemInMainHand().getType() == Material.STONECUTTER) {
-			if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+
+		// Builder Class
+		if (inventory.getItemInMainHand().getType() == Material.STONECUTTER) {
+			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 				drills = builder.getDrills();
 				Drill drill = drills.get(player.getDisplayName());
-				if(drill.isPlaced()) {
-					drill.openDrill(player);
-				}else {
-					drill.setPlaced(true);
-				}
+				drill.setPlaced(true);
+			}
+		} else if (event.getClickedBlock().getType() == Material.STONECUTTER) {
+			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				drills = builder.getDrills();
+				Drill drill = drills.get(player.getDisplayName());
+				drill.openDrill(player);
+			} else if (inventory.getItemInMainHand().getType() == Material.ENDERMAN_SPAWN_EGG) {
+				event.setCancelled(true);
+				builder.giveItems(player);
 			}
 		}
+
 	}
 
 	@EventHandler
@@ -107,13 +120,27 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			event.setDamage(2.5);
 		}
 	}
-	
+
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		if(event.getBlock().getType() == Material.STONECUTTER) {
+		if (event.getBlock().getType() == Material.STONECUTTER) {
 			drills = builder.getDrills();
 			Drill drill = drills.get(event.getPlayer().getDisplayName());
 			drill.setPlaced(false);
+		}
+	}
+
+	@EventHandler
+	public void onFurnaceSmelt(FurnaceSmeltEvent event) {
+		ArrayList<ItemStack> outputFood = new ArrayList<ItemStack>();
+		outputFood.add(new ItemStack(Material.CAKE, 1));
+		outputFood.add(new ItemStack(Material.COOKIE, 1));
+		outputFood.add(new ItemStack(Material.BREAD, 1));
+
+		Collections.shuffle(outputFood);
+
+		if (event.getSource().getType() == Material.WHEAT) {
+			event.setResult(new ItemStack(outputFood.get(0)));
 		}
 	}
 
