@@ -1,7 +1,6 @@
 package plugin.monstersvskingsmen;
 
 import java.util.Hashtable;
-
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -10,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -27,7 +27,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private HotTubClass hottub = new HotTubClass();
 	private BuilderClass builder = new BuilderClass();
 	private BakerClass baker = new BakerClass();
-	
+
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
 	@Override
@@ -94,33 +94,25 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		}
 
 		// Builder Class
-		if (inventory.getItemInMainHand().getType() == Material.STONECUTTER) {
-			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				drills = builder.getDrills();
+		if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.STONECUTTER && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			event.setCancelled(true);
+			drills = builder.getDrills();
+			if(drills.containsKey(player.getDisplayName()) && drills.get(player.getDisplayName()).getBlockLocation().equals(event.getClickedBlock().getLocation())) {
 				Drill drill = drills.get(player.getDisplayName());
-				drill.setPlaced(true);
-			}
-		} else if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.STONECUTTER) {
-			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				event.setCancelled(true);
-				drills = builder.getDrills();
-				if(drills.containsKey(player.getDisplayName())) {
-					Drill drill = drills.get(player.getDisplayName());
-					drill.openDrill(player);
-				}
+				drill.openDrill(player);
 			}
 		} else if (inventory.getItemInMainHand().getType() == Material.ENDERMAN_SPAWN_EGG) {
-				event.setCancelled(true);
-				builder.giveItems(player);
+			event.setCancelled(true);
+			builder.giveItems(player);
 		}
-		
+
 		// Baker Class
 		if (inventory.getItemInMainHand().getType() == Material.ZOGLIN_SPAWN_EGG) {
 			event.setCancelled(true);
 			baker.giveItems(player);
 		}
 	}
-	
+
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
@@ -132,8 +124,27 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (event.getBlock().getType() == Material.STONECUTTER) {
 			drills = builder.getDrills();
-			Drill drill = drills.get(event.getPlayer().getDisplayName());
-			drill.setPlaced(false);
+			if (drills.containsKey(event.getPlayer().getDisplayName()) && drills.get(event.getPlayer().getDisplayName()).getBlockLocation().equals(event.getBlock().getLocation())) {
+				Drill drill = drills.get(event.getPlayer().getDisplayName());
+				drill.setPlaced(false);
+				drill.setBlockLocation(null);
+			} else {
+				event.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		if (event.getBlockPlaced().getType() == Material.STONECUTTER) {
+			drills = builder.getDrills();
+			if (drills.containsKey(event.getPlayer().getDisplayName()) && !drills.get(event.getPlayer().getDisplayName()).isPlaced()) {
+				Drill drill = drills.get(event.getPlayer().getDisplayName());
+				drill.setPlaced(true);
+				drill.setBlockLocation(event.getBlockPlaced().getLocation());
+			} else {
+				event.setCancelled(true);
+			}
 		}
 	}
 
