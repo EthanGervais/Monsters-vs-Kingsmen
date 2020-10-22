@@ -1,6 +1,7 @@
 package plugin.monstersvskingsmen;
 
 import java.util.Hashtable;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -127,7 +128,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			if (drills.containsKey(event.getPlayer().getDisplayName()) && drills.get(event.getPlayer().getDisplayName()).getBlockLocation().equals(event.getBlock().getLocation())) {
 				Drill drill = drills.get(event.getPlayer().getDisplayName());
 				drill.setPlaced(false);
-				drill.setBlockLocation(null);
+				drill.setBlockLocation(new Location(event.getPlayer().getWorld(), 0, 0, 0));
 			} else {
 				event.setCancelled(true);
 			}
@@ -136,12 +137,12 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (event.getBlockPlaced().getType() == Material.STONECUTTER) {
+		if (event.getBlock().getType() == Material.STONECUTTER) {
 			drills = builder.getDrills();
 			if (drills.containsKey(event.getPlayer().getDisplayName()) && !drills.get(event.getPlayer().getDisplayName()).isPlaced()) {
 				Drill drill = drills.get(event.getPlayer().getDisplayName());
 				drill.setPlaced(true);
-				drill.setBlockLocation(event.getBlockPlaced().getLocation());
+				drill.setBlockLocation(event.getBlock().getLocation());
 			} else {
 				event.setCancelled(true);
 			}

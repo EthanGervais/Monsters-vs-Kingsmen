@@ -12,6 +12,7 @@ public class Drill {
 	
 	public Drill(Player player) {
 		inv = Bukkit.createInventory(player, 27, "Drill");
+		setBlockLocation(new Location(player.getWorld(), 0, 0, 0));
 	}
 	
 	public void setPlaced(boolean input) {
