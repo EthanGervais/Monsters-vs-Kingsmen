@@ -17,11 +17,12 @@ public class BakerClass {
 		inventory.addItem(seedStack);
 		inventory.addItem(coalStack);
 	}
-	
+
 	public void addFurnaceRecipe(Plugin plugin) {
 		ItemStack result = new ItemStack(Material.COOKIE);
 		NamespacedKey cookiekey = new NamespacedKey(plugin, "cookie_key");
-		FurnaceRecipe recipe = new FurnaceRecipe(cookiekey, result, Material.WHEAT, 0, 200);
+		FurnaceRecipe recipe = new FurnaceRecipe(cookiekey, result, Material.WHEAT, 0, 100);
 		plugin.getServer().addRecipe(recipe);
 	}
+	
 }

@@ -18,8 +18,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -140,7 +143,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
 			event.setDamage(2.5);
-		}
+		} 
 	}
 
 	@EventHandler
@@ -177,7 +180,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			for(final Block block : event.getBlocks()) {
 				if(block.getType() == Material.COAL_BLOCK) {
 					Random rand = new Random();
-					if(rand.nextInt(4) + 1 == 1) {
+					if(rand.nextInt(3) == 1) {
 						MonstersVsKingsmen.scheduleSyncDelayedTask(new Runnable() {
 							public void run() {
 								Location tempLoc = block.getLocation().add(0, 1, 0);
@@ -195,6 +198,42 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					}, 1);
 				}
 			}
+		}
+	}
+	
+
+
+	@EventHandler
+	public void changeCookieFoodPoints(FoodLevelChangeEvent event) {
+		if (event.getItem().getType() == Material.COOKIE) {
+			event.setFoodLevel(event.getFoodLevel() + 6);
+		}
+	}
+
+	@EventHandler
+	public void onFurnaceSmelt(FurnaceSmeltEvent event) {
+		ItemStack cookie = new ItemStack(Material.COOKIE);
+		ItemStack cake = new ItemStack(Material.CAKE);
+		ItemStack bread = new ItemStack(Material.BREAD);
+
+		if (event.getSource().getType() == Material.WHEAT) {
+			Random rand = new Random();
+			int odds = rand.nextInt(6);
+
+			if (odds == 0) {
+				event.setResult(cookie);
+			} else if (odds == 1 || odds == 2) {
+				event.setResult(cake);
+			} else {
+				event.setResult(bread);
+			}
+		}
+	}
+
+	@EventHandler
+	public void onPlayerMunching(PlayerItemConsumeEvent event) {
+		if (event.getItem().getType() == Material.COOKIE) {
+			
 		}
 	}
 	
