@@ -1,6 +1,7 @@
 package plugin.monstersvskingsmen;
 
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -25,7 +26,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import plugin.classes.*;
 import plugin.activatedBlock.*;
@@ -41,14 +45,17 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private ArmorsmithClass armorsmith = new ArmorsmithClass();
 
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
-	
+
 	public static MonstersVsKingsmen instance;
 
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
+		
+		removeRecipes();
 		baker.addFurnaceRecipe(this);
 		armorsmith.addFurnaceRecipe(this);
+
 		instance = this;
 	}
 
@@ -60,7 +67,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	public static int scheduleSyncDelayedTask(Runnable runnable, int delay) {
 		return Bukkit.getScheduler().scheduleSyncDelayedTask(instance, runnable, delay);
 	}
-	
+
 	@EventHandler
 	public void onPlayerInteractBlock(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
@@ -107,17 +114,18 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		if (inventory.getItemInMainHand().getType() == Material.DRAGON_HEAD) {
 			event.setCancelled(true);
 			hottub.invisibility(player);
-			;
 		} else if (inventory.getItemInMainHand().getType() == Material.ENDERMITE_SPAWN_EGG) {
 			event.setCancelled(true);
 			hottub.giveItems(player);
 		}
 
 		// Builder Class
-		if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.STONECUTTER && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+		if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.STONECUTTER
+				&& event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			event.setCancelled(true);
 			drills = builder.getDrills();
-			if(drills.containsKey(player.getDisplayName()) && drills.get(player.getDisplayName()).getBlockLocation().equals(event.getClickedBlock().getLocation())) {
+			if (drills.containsKey(player.getDisplayName()) && drills.get(player.getDisplayName()).getBlockLocation()
+					.equals(event.getClickedBlock().getLocation())) {
 				Drill drill = drills.get(player.getDisplayName());
 				drill.openDrill(player);
 			}
@@ -131,8 +139,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			event.setCancelled(true);
 			baker.giveItems(player);
 		}
-		
-		//Armorsmith Class
+
+		// Armorsmith Class
 		if (inventory.getItemInMainHand().getType() == Material.OCELOT_SPAWN_EGG) {
 			event.setCancelled(true);
 			armorsmith.giveItems(player);
@@ -143,14 +151,15 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
 			event.setDamage(2.5);
-		} 
+		}
 	}
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (event.getBlock().getType() == Material.STONECUTTER) {
 			drills = builder.getDrills();
-			if (drills.containsKey(event.getPlayer().getDisplayName()) && drills.get(event.getPlayer().getDisplayName()).getBlockLocation().equals(event.getBlock().getLocation())) {
+			if (drills.containsKey(event.getPlayer().getDisplayName()) && drills.get(event.getPlayer().getDisplayName())
+					.getBlockLocation().equals(event.getBlock().getLocation())) {
 				Drill drill = drills.get(event.getPlayer().getDisplayName());
 				drill.setPlaced(false);
 				drill.setBlockLocation(new Location(event.getPlayer().getWorld(), 0, 0, 0));
@@ -164,7 +173,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (event.getBlock().getType() == Material.STONECUTTER) {
 			drills = builder.getDrills();
-			if (drills.containsKey(event.getPlayer().getDisplayName()) && !drills.get(event.getPlayer().getDisplayName()).isPlaced()) {
+			if (drills.containsKey(event.getPlayer().getDisplayName())
+					&& !drills.get(event.getPlayer().getDisplayName()).isPlaced()) {
 				Drill drill = drills.get(event.getPlayer().getDisplayName());
 				drill.setPlaced(true);
 				drill.setBlockLocation(event.getBlock().getLocation());
@@ -173,14 +183,14 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void onPistonExtend(BlockPistonExtendEvent event) {
-		if(event.getDirection() == BlockFace.UP) {
-			for(final Block block : event.getBlocks()) {
-				if(block.getType() == Material.COAL_BLOCK) {
+		if (event.getDirection() == BlockFace.UP) {
+			for (final Block block : event.getBlocks()) {
+				if (block.getType() == Material.COAL_BLOCK) {
 					Random rand = new Random();
-					if(rand.nextInt(3) == 1) {
+					if (rand.nextInt(3) == 1) {
 						MonstersVsKingsmen.scheduleSyncDelayedTask(new Runnable() {
 							public void run() {
 								Location tempLoc = block.getLocation().add(0, 1, 0);
@@ -188,25 +198,32 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 							}
 						}, 1);
 					}
-				}else if (block.getType() == Material.NETHERRACK) {
+				} else if (block.getType() == Material.NETHERRACK) {
 					MonstersVsKingsmen.scheduleSyncDelayedTask(new Runnable() {
+
 						public void run() {
 							Location tempLoc = block.getLocation().add(0, 1, 0);
 							tempLoc.getBlock().setType(Material.AIR);
 							tempLoc.getWorld().dropItem(tempLoc, new ItemStack(Material.COAL, 5));
 						}
+
 					}, 1);
 				}
 			}
 		}
 	}
-	
-
 
 	@EventHandler
-	public void changeCookieFoodPoints(FoodLevelChangeEvent event) {
-		if (event.getItem().getType() == Material.COOKIE) {
-			event.setFoodLevel(event.getFoodLevel() + 6);
+	public void changeFoodLevelChange(FoodLevelChangeEvent event) {
+		if (event instanceof Player) {
+			Player player = (Player) event.getEntity();
+
+			if (event.getItem().getType() == Material.COOKIE) {
+				player.setFoodLevel(player.getFoodLevel() + 6);
+				player.setSaturation(15);
+			} else if (event.getItem().getType() == Material.BREAD) {
+				player.setSaturation(10);
+			}
 		}
 	}
 
@@ -232,11 +249,33 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onPlayerMunching(PlayerItemConsumeEvent event) {
-		if (event.getItem().getType() == Material.COOKIE) {
-			
+		if (event.getItem().getType() == Material.BREAD) {
+			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 50, 0));
+		} else if (event.getItem().getType() == Material.CAKE) {
+			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 50, 0));
+			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 0));
+		} else if (event.getItem().getType() == Material.COOKIE) {
+			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 50, 0));
+			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 0));
+			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 150, 0));
 		}
 	}
 	
+	public void removeRecipes() {
+		Iterator<Recipe> it = getServer().recipeIterator();
+		Recipe recipe;
+		while (it.hasNext()) {
+			recipe = it.next();
+			if (recipe != null && recipe.getResult().getType() == Material.BREAD) {
+				it.remove();
+			} else if (recipe != null && recipe.getResult().getType() == Material.COOKIE) {
+				it.remove();
+			} else if (recipe != null && recipe.getResult().getType() == Material.CAKE) {
+				it.remove();
+			}
+		}
+	}
+
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
