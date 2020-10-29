@@ -25,7 +25,7 @@ import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
@@ -277,12 +277,15 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		}
 	}
 	
+	@EventHandler
 	public void onAnvilCraft(PrepareAnvilEvent event) {
-		Inventory inv = event.getInventory();
-		if(inv.contains(Material.WOODEN_SWORD) && inv.contains(Material.IRON_BARS)) {
+		final AnvilInventory inv = event.getInventory();
+		if(inv.contains(Material.WOODEN_SWORD) && inv.contains(Material.IRON_INGOT)) {
 			event.setResult(new ItemStack(Material.IRON_SWORD, 1));
+			event.getInventory().setRepairCost(1);
 		}else if (inv.contains(Material.IRON_SWORD) && inv.contains(Material.DIAMOND)) {
 			event.setResult(new ItemStack(Material.DIAMOND_SWORD, 1));
+			event.getInventory().setRepairCost(1);
 		}
 	}
 	
