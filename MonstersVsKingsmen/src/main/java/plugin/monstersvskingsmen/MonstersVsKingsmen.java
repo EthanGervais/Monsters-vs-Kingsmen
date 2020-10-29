@@ -22,8 +22,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
@@ -272,6 +274,15 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 50, 0));
 			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 0));
 			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 150, 0));
+		}
+	}
+	
+	public void onAnvilCraft(PrepareAnvilEvent event) {
+		Inventory inv = event.getInventory();
+		if(inv.contains(Material.WOODEN_SWORD) && inv.contains(Material.IRON_BARS)) {
+			event.setResult(new ItemStack(Material.IRON_SWORD, 1));
+		}else if (inv.contains(Material.IRON_SWORD) && inv.contains(Material.DIAMOND)) {
+			event.setResult(new ItemStack(Material.DIAMOND_SWORD, 1));
 		}
 	}
 	
