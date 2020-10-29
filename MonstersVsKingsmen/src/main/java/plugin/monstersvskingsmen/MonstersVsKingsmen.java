@@ -55,7 +55,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
-		
+
 		removeRecipes();
 		baker.addFurnaceRecipe(this);
 		armorsmith.addFurnaceRecipe(this);
@@ -149,17 +149,24 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			event.setCancelled(true);
 			armorsmith.giveItems(player);
 		}
-		
+
 		// Weaponsmith
 		if (inventory.getItemInMainHand().getType() == Material.SKELETON_HORSE_SPAWN_EGG) {
 			event.setCancelled(true);
 			weaponsmith.giveItems(player);
 		}
-		
-		//Torchman
+
+		// Torchman
 		if (inventory.getItemInMainHand().getType() == Material.TROPICAL_FISH_SPAWN_EGG) {
 			event.setCancelled(true);
 			torchman.giveItems(player);
+		} else if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.FIRE
+				&& event.getAction() == Action.LEFT_CLICK_BLOCK) {
+			if (inventory.getItemInMainHand().getType() == Material.STICK) {
+				inventory.getItemInMainHand().setAmount(inventory.getItemInMainHand().getAmount() - 1);
+				inventory.addItem(new ItemStack(Material.TORCH, 1));
+				event.setCancelled(true);
+			}
 		}
 	}
 
@@ -172,7 +179,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (event.getBlock().getType() == Material.STONECUTTER) {
+
+		if (event.getBlock().getType() == Material.STONECUTTER) { // For Armorsmith
 			drills = builder.getDrills();
 			if (drills.containsKey(event.getPlayer().getDisplayName()) && drills.get(event.getPlayer().getDisplayName())
 					.getBlockLocation().equals(event.getBlock().getLocation())) {
@@ -182,6 +190,13 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			} else {
 				event.setCancelled(true);
 			}
+		} else if (event.getBlock().getType() == Material.OAK_LOG) { // For Torchman
+			Block block = event.getBlock();
+			Location tempLoc = block.getLocation();
+			tempLoc.getBlock().setType(Material.AIR);
+			tempLoc.getWorld().dropItemNaturally(tempLoc, new ItemStack(Material.OAK_PLANKS, 1));
+
+			event.setCancelled(true);
 		}
 	}
 
@@ -276,19 +291,19 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 150, 0));
 		}
 	}
-	
+
 	@EventHandler
 	public void onAnvilCraft(PrepareAnvilEvent event) {
 		final AnvilInventory inv = event.getInventory();
-		if(inv.contains(Material.WOODEN_SWORD) && inv.contains(Material.IRON_INGOT)) {
+		if (inv.contains(Material.WOODEN_SWORD) && inv.contains(Material.IRON_INGOT)) {
 			event.setResult(new ItemStack(Material.IRON_SWORD, 1));
 			event.getInventory().setRepairCost(1);
-		}else if (inv.contains(Material.IRON_SWORD) && inv.contains(Material.DIAMOND)) {
+		} else if (inv.contains(Material.IRON_SWORD) && inv.contains(Material.DIAMOND)) {
 			event.setResult(new ItemStack(Material.DIAMOND_SWORD, 1));
 			event.getInventory().setRepairCost(1);
 		}
 	}
-	
+
 	public void removeRecipes() {
 		Iterator<Recipe> it = getServer().recipeIterator();
 		Recipe recipe;
@@ -299,6 +314,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			} else if (recipe != null && recipe.getResult().getType() == Material.COOKIE) {
 				it.remove();
 			} else if (recipe != null && recipe.getResult().getType() == Material.CAKE) {
+				it.remove();
+			} else if (recipe != null && recipe.getResult().getType() == Material.TORCH) {
 				it.remove();
 			}
 		}

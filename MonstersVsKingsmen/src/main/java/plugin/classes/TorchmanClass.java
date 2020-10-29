@@ -18,13 +18,4 @@ public class TorchmanClass {
 		inventory.addItem(axeStack);
 	}
 	
-//	public void onBlockBreak(BlockBreakEvent event) {
-//		if (!(event instanceof BlockBreakEvent)) {
-//			return;
-//		}
-//		
-//		if (event.getBlock().getType() == Material.OAK_WOOD) {
-//			
-//		}
-//	}
 }
