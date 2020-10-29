@@ -43,6 +43,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private BuilderClass builder = new BuilderClass();
 	private BakerClass baker = new BakerClass();
 	private ArmorsmithClass armorsmith = new ArmorsmithClass();
+	private WeaponsmithClass weaponsmith = new WeaponsmithClass();
+	private TorchmanClass torchman = new TorchmanClass();
 
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
@@ -144,6 +146,18 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		if (inventory.getItemInMainHand().getType() == Material.OCELOT_SPAWN_EGG) {
 			event.setCancelled(true);
 			armorsmith.giveItems(player);
+		}
+		
+		// Weaponsmith
+		if (inventory.getItemInMainHand().getType() == Material.SKELETON_HORSE_SPAWN_EGG) {
+			event.setCancelled(true);
+			weaponsmith.giveItems(player);
+		}
+		
+		//Torchman
+		if (inventory.getItemInMainHand().getType() == Material.TROPICAL_FISH_SPAWN_EGG) {
+			event.setCancelled(true);
+			torchman.giveItems(player);
 		}
 	}
 

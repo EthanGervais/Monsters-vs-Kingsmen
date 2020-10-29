@@ -66,6 +66,20 @@ public class SetUpLobby {
 		stack.setItemMeta(meta);
 		kingsmenItems.add(stack);
 		
+		// Weaponsmith
+		stack = new ItemStack(Material.SKELETON_HORSE_SPAWN_EGG, 1);
+		meta = stack.getItemMeta();
+		meta.setDisplayName("Weaponsmith");
+		stack.setItemMeta(meta);
+		kingsmenItems.add(stack);
+		
+		// Torchman
+		stack = new ItemStack(Material.TROPICAL_FISH_SPAWN_EGG, 1);
+		meta = stack.getItemMeta();
+		meta.setDisplayName("Torchman");
+		stack.setItemMeta(meta);
+		kingsmenItems.add(stack);
+		
 		// Baker Item
 		stack = new ItemStack(Material.ZOGLIN_SPAWN_EGG, 1);
 		meta = stack.getItemMeta();
