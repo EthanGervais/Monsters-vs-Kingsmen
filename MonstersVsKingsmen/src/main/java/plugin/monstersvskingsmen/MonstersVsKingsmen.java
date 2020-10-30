@@ -2,6 +2,7 @@ package plugin.monstersvskingsmen;
 
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -158,12 +159,14 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		if (inventory.getItemInMainHand().getType() == Material.SKELETON_HORSE_SPAWN_EGG) {
 			event.setCancelled(true);
 			weaponsmith.giveItems(player);
-		} else if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.WATER
-				&& event.getAction() == Action.LEFT_CLICK_BLOCK) {
-			if (inventory.getItemInMainHand().getType() == Material.WHITE_DYE) {
-				inventory.getItemInMainHand().setAmount(inventory.getItemInMainHand().getAmount() - 1);
-				inventory.addItem(new ItemStack(Material.IRON_INGOT, 1));
-				event.setCancelled(true);
+		} else if (inventory.getItemInMainHand().getType() == Material.WHITE_DYE && (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR)) {
+			List<Block> los = event.getPlayer().getLineOfSight(null, 5);
+			for (Block b : los) {
+				if (b.getType() == Material.LAVA) {
+					inventory.getItemInMainHand().setAmount(inventory.getItemInMainHand().getAmount() - 1);
+					inventory.addItem(new ItemStack(Material.IRON_INGOT, 1));
+					event.setCancelled(true);
+				}
 			}
 		}
 
@@ -312,7 +315,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			event.setResult(new ItemStack(Material.DIAMOND_SWORD, 1));
 		}
 	}
-	
+
 	@EventHandler
 	public void anvilClick(InventoryClickEvent event) {
 		ItemStack item1 = event.getInventory().getItem(0);
@@ -322,9 +325,9 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			return;
 		}
 
-		if (event.getInventory().getType().equals(InventoryType.ANVIL) && ((item1.getType() == Material.WOODEN_SWORD
-				&& item2.getType() == Material.IRON_INGOT) || (item2.getType() == Material.WOODEN_SWORD
-				&& item1.getType() == Material.IRON_INGOT))) {
+		if (event.getInventory().getType().equals(InventoryType.ANVIL)
+				&& ((item1.getType() == Material.WOODEN_SWORD && item2.getType() == Material.IRON_INGOT)
+						|| (item2.getType() == Material.WOODEN_SWORD && item1.getType() == Material.IRON_INGOT))) {
 			ItemStack result = new ItemStack(Material.IRON_SWORD);
 			event.getInventory().setItem(2, result);
 
@@ -333,9 +336,9 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				event.getWhoClicked().setItemOnCursor(result);
 				event.getInventory().clear();
 			}
-		} else if (event.getInventory().getType().equals(InventoryType.ANVIL) && ((item1.getType() == Material.IRON_SWORD
-				&& item2.getType() == Material.DIAMOND) || (item2.getType() == Material.IRON_SWORD
-				&& item1.getType() == Material.DIAMOND))) {
+		} else if (event.getInventory().getType().equals(InventoryType.ANVIL)
+				&& ((item1.getType() == Material.IRON_SWORD && item2.getType() == Material.DIAMOND)
+						|| (item2.getType() == Material.IRON_SWORD && item1.getType() == Material.DIAMOND))) {
 			ItemStack result = new ItemStack(Material.DIAMOND_SWORD);
 			event.getInventory().setItem(2, result);
 
