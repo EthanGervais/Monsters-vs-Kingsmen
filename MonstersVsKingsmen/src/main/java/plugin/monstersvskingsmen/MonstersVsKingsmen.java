@@ -21,6 +21,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -313,15 +314,35 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	}
 	
 	@EventHandler
-	public void onInvClick(InventoryClickEvent event) {
-		if(event.getView().getType() == InventoryType.ANVIL) {
-			AnvilInventory inv = (AnvilInventory) event.getInventory();
-			if(event.getSlotType() == SlotType.RESULT) {
-				if(inv.contains(Material.WOODEN_SWORD) && inv.contains(Material.IRON_INGOT)) {
-					event.setCurrentItem(new ItemStack(Material.IRON_SWORD, 1));
-				} else if(inv.contains(Material.IRON_SWORD) && inv.contains(Material.DIAMOND)) {
-					event.setCurrentItem(new ItemStack(Material.DIAMOND_SWORD, 1));
-				}
+	public void anvilClick(InventoryClickEvent event) {
+		ItemStack item1 = event.getInventory().getItem(0);
+		ItemStack item2 = event.getInventory().getItem(1);
+
+		if (item1 == null || item2 == null) {
+			return;
+		}
+
+		if (event.getInventory().getType().equals(InventoryType.ANVIL) && ((item1.getType() == Material.WOODEN_SWORD
+				&& item2.getType() == Material.IRON_INGOT) || (item2.getType() == Material.WOODEN_SWORD
+				&& item1.getType() == Material.IRON_INGOT))) {
+			ItemStack result = new ItemStack(Material.IRON_SWORD);
+			event.getInventory().setItem(2, result);
+
+			if (event.getSlotType().equals(InventoryType.SlotType.RESULT) && event.getClick().equals(ClickType.LEFT)
+					|| event.getClick().equals(ClickType.SHIFT_LEFT)) {
+				event.getWhoClicked().setItemOnCursor(result);
+				event.getInventory().clear();
+			}
+		} else if (event.getInventory().getType().equals(InventoryType.ANVIL) && ((item1.getType() == Material.IRON_SWORD
+				&& item2.getType() == Material.DIAMOND) || (item2.getType() == Material.IRON_SWORD
+				&& item1.getType() == Material.DIAMOND))) {
+			ItemStack result = new ItemStack(Material.DIAMOND_SWORD);
+			event.getInventory().setItem(2, result);
+
+			if (event.getSlotType().equals(InventoryType.SlotType.RESULT) && event.getClick().equals(ClickType.LEFT)
+					|| event.getClick().equals(ClickType.SHIFT_LEFT)) {
+				event.getWhoClicked().setItemOnCursor(result);
+				event.getInventory().clear();
 			}
 		}
 	}
