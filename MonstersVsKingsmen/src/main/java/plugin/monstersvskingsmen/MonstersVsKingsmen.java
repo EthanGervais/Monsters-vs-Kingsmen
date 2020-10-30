@@ -22,6 +22,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -154,6 +157,13 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		if (inventory.getItemInMainHand().getType() == Material.SKELETON_HORSE_SPAWN_EGG) {
 			event.setCancelled(true);
 			weaponsmith.giveItems(player);
+		} else if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.WATER
+				&& event.getAction() == Action.LEFT_CLICK_BLOCK) {
+			if (inventory.getItemInMainHand().getType() == Material.WHITE_DYE) {
+				inventory.getItemInMainHand().setAmount(inventory.getItemInMainHand().getAmount() - 1);
+				inventory.addItem(new ItemStack(Material.IRON_INGOT, 1));
+				event.setCancelled(true);
+			}
 		}
 
 		// Torchman
@@ -294,13 +304,25 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onAnvilCraft(PrepareAnvilEvent event) {
-		final AnvilInventory inv = event.getInventory();
+		AnvilInventory inv = event.getInventory();
 		if (inv.contains(Material.WOODEN_SWORD) && inv.contains(Material.IRON_INGOT)) {
 			event.setResult(new ItemStack(Material.IRON_SWORD, 1));
-			event.getInventory().setRepairCost(1);
 		} else if (inv.contains(Material.IRON_SWORD) && inv.contains(Material.DIAMOND)) {
 			event.setResult(new ItemStack(Material.DIAMOND_SWORD, 1));
-			event.getInventory().setRepairCost(1);
+		}
+	}
+	
+	@EventHandler
+	public void onInvClick(InventoryClickEvent event) {
+		if(event.getView().getType() == InventoryType.ANVIL) {
+			AnvilInventory inv = (AnvilInventory) event.getInventory();
+			if(event.getSlotType() == SlotType.RESULT) {
+				if(inv.contains(Material.WOODEN_SWORD) && inv.contains(Material.IRON_INGOT)) {
+					event.setCurrentItem(new ItemStack(Material.IRON_SWORD, 1));
+				} else if(inv.contains(Material.IRON_SWORD) && inv.contains(Material.DIAMOND)) {
+					event.setCurrentItem(new ItemStack(Material.DIAMOND_SWORD, 1));
+				}
+			}
 		}
 	}
 
