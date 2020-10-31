@@ -17,7 +17,6 @@ public class SkeletonClass {
 		disguise.setSelfDisguiseVisible(false);
 
 		Inventory inventory = player.getInventory();
-		inventory.remove(Material.SKELETON_SPAWN_EGG);
 
 		ItemStack bow = new ItemStack(Material.BOW);
 		ItemStack arrows = new ItemStack(Material.ARROW, 256);

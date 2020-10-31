@@ -17,7 +17,6 @@ public class ZombieClass {
 		disguise.setSelfDisguiseVisible(false);
 		
 		Inventory inventory = player.getInventory();
-		inventory.remove(Material.ZOMBIE_SPAWN_EGG);
 		
 		ItemStack sword = new ItemStack(Material.IRON_SWORD);
 		inventory.addItem(sword);

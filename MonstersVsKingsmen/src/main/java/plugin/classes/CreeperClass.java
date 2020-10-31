@@ -16,7 +16,6 @@ public class CreeperClass {
 		disguise.setSelfDisguiseVisible(false);
 		
 		Inventory inventory = player.getInventory();
-		inventory.remove(Material.CREEPER_SPAWN_EGG);
 		
 		ItemStack gunPowder = new ItemStack(Material.GUNPOWDER, 1);
 		inventory.addItem(gunPowder);

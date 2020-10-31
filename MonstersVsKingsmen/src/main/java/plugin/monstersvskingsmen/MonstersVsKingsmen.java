@@ -1,16 +1,13 @@
 package plugin.monstersvskingsmen;
 
-import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
@@ -194,6 +191,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		// ZombieClass
 		if (inventory.getItemInMainHand().getType() == Material.ZOMBIE_SPAWN_EGG) {
 			event.setCancelled(true);
+			player.getInventory().clear();
 			player.setGameMode(GameMode.SURVIVAL);
 			zombieClass.giveItems(player);
 		}
@@ -201,6 +199,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		// Skeleton Class
 		if (inventory.getItemInMainHand().getType() == Material.SKELETON_SPAWN_EGG) {
 			event.setCancelled(true);
+			player.getInventory().clear();
 			player.setGameMode(GameMode.SURVIVAL);
 			skeletonClass.giveItems(player);
 		}
@@ -208,6 +207,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		// Creeper Class
 		if (inventory.getItemInMainHand().getType() == Material.CREEPER_SPAWN_EGG) {
 			event.setCancelled(true);
+			player.getInventory().clear();
 			player.setGameMode(GameMode.SURVIVAL);
 			creeperClass.giveItems(player);
 		} else if (inventory.getItemInMainHand().getType() == Material.GUNPOWDER && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
@@ -393,15 +393,15 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		event.getPlayer().setGameMode(GameMode.SPECTATOR);
 		Inventory inv = event.getPlayer().getInventory();
 		Random rand = new Random();
-		int monster = rand.nextInt(2);
-		if(monster == 0) {
-			ItemStack spawn = new ItemStack(Material.SKELETON_SPAWN_EGG);
+		int monster = rand.nextInt(75);
+		if(monster >= 0 && monster < 25) {
+			ItemStack spawn = new ItemStack(Material.ZOMBIE_SPAWN_EGG, 576);
 			inv.addItem(spawn);
-		} else if(monster == 1) {
-			ItemStack spawn = new ItemStack(Material.ZOMBIE_SPAWN_EGG);
+		} else if(monster >= 25 && monster < 50) {
+			ItemStack spawn = new ItemStack(Material.SKELETON_SPAWN_EGG, 576);
 			inv.addItem(spawn);
-		} else if(monster == 2) {
-			ItemStack spawn = new ItemStack(Material.CREEPER_SPAWN_EGG);
+		} else {
+			ItemStack spawn = new ItemStack(Material.CREEPER_SPAWN_EGG, 576);
 			inv.addItem(spawn);
 		} 
 	}
@@ -431,15 +431,15 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				setup.assignRoles();
 				MonstersVsKingsmen.scheduleSyncDelayedTask(new Runnable() {
 					public void run() {
-						int random = new Random().nextInt(Bukkit.getOnlinePlayers().size());
+						int random = new Random().nextInt(instance.getServer().getOnlinePlayers().size() - 1);
 						for(Player dragon : Bukkit.getOnlinePlayers()) {
-							if(random == 1) {
+							if(random == 0) {
 								dragonClass.giveItems(dragon);
 							}
 							random -= 1;
 						}
 					}
-				}, 1000); // 36000 time for 1 1/2 days
+				}, 36000); // 36000 time for 1 1/2 days
 			}
 		}
 		return true;
