@@ -1,6 +1,9 @@
 package plugin.classes;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
@@ -11,5 +14,18 @@ public class ZombieClass {
 		disguise.setEntity(player);
 		disguise.startDisguise();
 		disguise.setSelfDisguiseVisible(false);
+		
+		Inventory inventory = player.getInventory();
+		inventory.remove(Material.ZOMBIE_SPAWN_EGG);
+		
+		ItemStack sword = new ItemStack(Material.IRON_SWORD);
+		inventory.addItem(sword);
+		
+		ItemStack[] armor = new ItemStack[4];
+		armor[0] = new ItemStack(Material.IRON_BOOTS);
+		armor[1] = new ItemStack(Material.IRON_LEGGINGS);
+		armor[2] = new ItemStack(Material.IRON_CHESTPLATE);
+		armor[3] = new ItemStack(Material.IRON_HELMET);
+		player.getInventory().setArmorContents(armor);
 	}
 }
