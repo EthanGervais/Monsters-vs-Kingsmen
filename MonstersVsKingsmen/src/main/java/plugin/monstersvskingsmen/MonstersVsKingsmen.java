@@ -51,6 +51,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private WeaponsmithClass weaponsmith = new WeaponsmithClass();
 	private TorchmanClass torchman = new TorchmanClass();
 	private ZombieClass zombieClass = new ZombieClass();
+	private SkeletonClass skeletonClass = new SkeletonClass();
 
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
@@ -186,6 +187,12 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		if (inventory.getItemInMainHand().getType() == Material.ZOMBIE_SPAWN_EGG) {
 			event.setCancelled(true);
 			zombieClass.giveItems(player);
+		}
+		
+		// Skeleton Class
+		if (inventory.getItemInMainHand().getType() == Material.SKELETON_SPAWN_EGG) {
+			event.setCancelled(true);
+			skeletonClass.giveItems(player);
 		}
 	}
 
