@@ -1,11 +1,13 @@
 package plugin.monstersvskingsmen;
 
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -31,7 +33,9 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
@@ -55,6 +59,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private ZombieClass zombieClass = new ZombieClass();
 	private SkeletonClass skeletonClass = new SkeletonClass();
 	private CreeperClass creeperClass = new CreeperClass();
+	private DragonClass dragonClass = new DragonClass();
 
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
@@ -189,18 +194,21 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		// ZombieClass
 		if (inventory.getItemInMainHand().getType() == Material.ZOMBIE_SPAWN_EGG) {
 			event.setCancelled(true);
+			player.setGameMode(GameMode.SURVIVAL);
 			zombieClass.giveItems(player);
 		}
 		
 		// Skeleton Class
 		if (inventory.getItemInMainHand().getType() == Material.SKELETON_SPAWN_EGG) {
 			event.setCancelled(true);
+			player.setGameMode(GameMode.SURVIVAL);
 			skeletonClass.giveItems(player);
 		}
 		
 		// Creeper Class
 		if (inventory.getItemInMainHand().getType() == Material.CREEPER_SPAWN_EGG) {
 			event.setCancelled(true);
+			player.setGameMode(GameMode.SURVIVAL);
 			creeperClass.giveItems(player);
 		} else if (inventory.getItemInMainHand().getType() == Material.GUNPOWDER && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 			Location loc = player.getLocation();
@@ -376,10 +384,28 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	}
 	
 	@EventHandler
-	public void onPlayerDeath(PlayerDeathEvent e) {
-	    e.getDrops().clear(); //Not sure if you need this line
+	public void onPlayerDeath(PlayerDeathEvent event) {
+	    event.getDrops().clear(); //Not sure if you need this line
 	}
 
+	@EventHandler
+	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		event.getPlayer().setGameMode(GameMode.SPECTATOR);
+		Inventory inv = event.getPlayer().getInventory();
+		Random rand = new Random();
+		int monster = rand.nextInt(2);
+		if(monster == 0) {
+			ItemStack spawn = new ItemStack(Material.SKELETON_SPAWN_EGG);
+			inv.addItem(spawn);
+		} else if(monster == 1) {
+			ItemStack spawn = new ItemStack(Material.ZOMBIE_SPAWN_EGG);
+			inv.addItem(spawn);
+		} else if(monster == 2) {
+			ItemStack spawn = new ItemStack(Material.CREEPER_SPAWN_EGG);
+			inv.addItem(spawn);
+		} 
+	}
+	
 	public void removeRecipes() {
 		Iterator<Recipe> it = getServer().recipeIterator();
 		Recipe recipe;
@@ -403,6 +429,17 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			if (player.isOp() && cmd.getName().equalsIgnoreCase("startgame")) {
 				SetUpLobby setup = new SetUpLobby();
 				setup.assignRoles();
+				MonstersVsKingsmen.scheduleSyncDelayedTask(new Runnable() {
+					public void run() {
+						int random = new Random().nextInt(Bukkit.getOnlinePlayers().size());
+						for(Player dragon : Bukkit.getOnlinePlayers()) {
+							if(random == 1) {
+								dragonClass.giveItems(dragon);
+							}
+							random -= 1;
+						}
+					}
+				}, 1000); // 36000 time for 1 1/2 days
 			}
 		}
 		return true;
