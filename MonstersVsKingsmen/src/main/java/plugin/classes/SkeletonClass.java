@@ -24,10 +24,10 @@ public class SkeletonClass {
 		inventory.addItem(arrows);
 
 		ItemStack[] armor = new ItemStack[4];
-		armor[0] = new ItemStack(Material.IRON_BOOTS);
-		armor[1] = new ItemStack(Material.IRON_LEGGINGS);
-		armor[2] = new ItemStack(Material.IRON_CHESTPLATE);
-		armor[3] = new ItemStack(Material.IRON_HELMET);
+		armor[0] = new ItemStack(Material.LEATHER_BOOTS);
+		armor[1] = new ItemStack(Material.LEATHER_LEGGINGS);
+		armor[2] = new ItemStack(Material.LEATHER_CHESTPLATE);
+		armor[3] = new ItemStack(Material.LEATHER_HELMET);
 		player.getInventory().setArmorContents(armor);
 	}
 }
