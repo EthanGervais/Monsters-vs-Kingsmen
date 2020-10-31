@@ -8,6 +8,7 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
@@ -21,6 +22,7 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
@@ -52,6 +54,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private TorchmanClass torchman = new TorchmanClass();
 	private ZombieClass zombieClass = new ZombieClass();
 	private SkeletonClass skeletonClass = new SkeletonClass();
+	private CreeperClass creeperClass = new CreeperClass();
 
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
@@ -193,6 +196,16 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		if (inventory.getItemInMainHand().getType() == Material.SKELETON_SPAWN_EGG) {
 			event.setCancelled(true);
 			skeletonClass.giveItems(player);
+		}
+		
+		// Creeper Class
+		if (inventory.getItemInMainHand().getType() == Material.CREEPER_SPAWN_EGG) {
+			event.setCancelled(true);
+			creeperClass.giveItems(player);
+		} else if (inventory.getItemInMainHand().getType() == Material.GUNPOWDER && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+			Location loc = player.getLocation();
+			player.getWorld().createExplosion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 8, true, true);
+			player.damage(1000);
 		}
 	}
 
@@ -360,6 +373,11 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				event.getInventory().clear();
 			}
 		}
+	}
+	
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent e) {
+	    e.getDrops().clear(); //Not sure if you need this line
 	}
 
 	public void removeRecipes() {
