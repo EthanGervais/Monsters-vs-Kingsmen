@@ -215,6 +215,10 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			player.getWorld().createExplosion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 8, true, true);
 			player.damage(1000);
 		}
+		
+		if(inventory.getItemInMainHand().getType() == Material.DRAGON_EGG && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+			dragonClass.dragonFireball(player);
+		}
 	}
 
 	@EventHandler
