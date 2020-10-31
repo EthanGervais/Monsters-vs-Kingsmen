@@ -36,7 +36,6 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
 import plugin.classes.*;
 import plugin.activatedBlock.*;
 
@@ -51,15 +50,16 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private ArmorsmithClass armorsmith = new ArmorsmithClass();
 	private WeaponsmithClass weaponsmith = new WeaponsmithClass();
 	private TorchmanClass torchman = new TorchmanClass();
+	private ZombieClass zombieClass = new ZombieClass();
 
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
 	public static MonstersVsKingsmen instance;
 
+
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
-
 		removeRecipes();
 		baker.addFurnaceRecipe(this);
 		armorsmith.addFurnaceRecipe(this);
@@ -180,6 +180,12 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				inventory.addItem(new ItemStack(Material.TORCH, 1));
 				event.setCancelled(true);
 			}
+		}
+		
+		// ZombieClass
+		if (inventory.getItemInMainHand().getType() == Material.ZOMBIE_SPAWN_EGG) {
+			event.setCancelled(true);
+			zombieClass.giveItems(player);
 		}
 	}
 
