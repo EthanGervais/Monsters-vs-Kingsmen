@@ -275,6 +275,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			player.damage(1000);
 		}
 
+		// Dragon Class
 		if (inventory.getItemInMainHand().getType() == Material.DRAGON_EGG
 				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 			dragonClass.dragonFireball(player);
@@ -459,13 +460,13 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		Random rand = new Random();
 		int monster = rand.nextInt(75);
 		if (monster >= 0 && monster < 25) {
-			ItemStack spawn = new ItemStack(Material.ZOMBIE_SPAWN_EGG, 576);
+			ItemStack spawn = new ItemStack(Material.ZOMBIE_SPAWN_EGG, 1);
 			inv.addItem(spawn);
 		} else if (monster >= 25 && monster < 50) {
-			ItemStack spawn = new ItemStack(Material.SKELETON_SPAWN_EGG, 576);
+			ItemStack spawn = new ItemStack(Material.SKELETON_SPAWN_EGG, 1);
 			inv.addItem(spawn);
 		} else {
-			ItemStack spawn = new ItemStack(Material.CREEPER_SPAWN_EGG, 576);
+			ItemStack spawn = new ItemStack(Material.CREEPER_SPAWN_EGG, 1);
 			inv.addItem(spawn);
 		}
 	}

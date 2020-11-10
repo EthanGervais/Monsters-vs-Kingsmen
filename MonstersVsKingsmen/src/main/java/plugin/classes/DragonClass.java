@@ -1,5 +1,7 @@
 package plugin.classes;
 
+import java.util.HashMap;
+
 import org.bukkit.Material;
 import org.bukkit.entity.DragonFireball;
 import org.bukkit.entity.Player;
@@ -35,5 +37,19 @@ public class DragonClass {
 		fireball.setVelocity(player.getLocation().getDirection().multiply(2));
 		fireball.setIsIncendiary(false);
 		fireball.setYield(5);
+	}
+	
+	public boolean giveLava(Player player, HashMap<String, Long> cooldown) {
+		int cooldownTime = 60;
+		if (cooldown.containsKey(player.getName())) {
+			long secondsLeft = ((cooldown.get(player.getName())/1000) + cooldownTime) - (System.currentTimeMillis() / 1000);
+			if (secondsLeft > 0) {
+				return true;
+			}
+		}
+		
+		Inventory inventory = player.getInventory();
+		ItemStack lava = new ItemStack(Material.LAVA_BUCKET);
+		return true;
 	}
 }
