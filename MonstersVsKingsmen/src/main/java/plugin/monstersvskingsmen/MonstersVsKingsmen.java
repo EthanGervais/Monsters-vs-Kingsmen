@@ -511,6 +511,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
 			if (player.isOp() && cmd.getName().equalsIgnoreCase("startgame")) {
+				systemReset = false;
 				SetUpLobby setup = new SetUpLobby();
 				setup.assignRoles();
 				MonstersVsKingsmen.scheduleSyncDelayedTask(new Runnable() {
@@ -540,11 +541,6 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					p.getInventory().clear();
 					p.setHealth(0);
 				}
-				MonstersVsKingsmen.scheduleSyncDelayedTask(new Runnable() {
-					public void run() {
-						systemReset = false;
-					}
-				}, 600);
 				WorldCreator wc = new WorldCreator("MvsK");
 				wc.environment(World.Environment.NORMAL);
 				wc.type(WorldType.NORMAL);
