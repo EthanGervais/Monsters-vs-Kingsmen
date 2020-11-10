@@ -540,7 +540,11 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					p.getInventory().clear();
 					p.setHealth(0);
 				}
-				systemReset = false;
+				MonstersVsKingsmen.scheduleSyncDelayedTask(new Runnable() {
+					public void run() {
+						systemReset = false;
+					}
+				}, 600);
 				WorldCreator wc = new WorldCreator("MvsK");
 				wc.environment(World.Environment.NORMAL);
 				wc.type(WorldType.NORMAL);
