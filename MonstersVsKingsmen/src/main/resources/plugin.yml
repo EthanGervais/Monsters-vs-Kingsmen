@@ -6,3 +6,6 @@ commands:
   startgame:
     description: This is the command to start the game.
     usage: /<command>
+  resetgame:
+    description: This is the command to reset the game.
+    usage: /<command>

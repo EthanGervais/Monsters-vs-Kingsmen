@@ -31,6 +31,10 @@ public class Drill {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+					
+					if (player.getHealth() == 0) {
+						break;
+					}
 				}
 			}
 		};
