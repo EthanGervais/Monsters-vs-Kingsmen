@@ -2,6 +2,7 @@ package plugin.monstersvskingsmen;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -64,13 +65,21 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private SkeletonClass skeletonClass = new SkeletonClass();
 	private CreeperClass creeperClass = new CreeperClass();
 	private DragonClass dragonClass = new DragonClass();
+	
 	private long kingCooldown = System.currentTimeMillis() / 1000;
 	private long peenutCooldown = System.currentTimeMillis() / 1000;
 	private long dmacCooldown = System.currentTimeMillis() / 1000;
 	private long zatrickCooldown = System.currentTimeMillis() / 1000;
 	private long hottubCooldown = System.currentTimeMillis() / 1000;
-	private long dragonCooldown = System.currentTimeMillis() / 1000;
+	private long dragonFireballCooldown = System.currentTimeMillis() / 1000;
+	private long dragonSecondaryFireballCooldown = System.currentTimeMillis() / 1000;
+	private long dragonLavaCooldown = System.currentTimeMillis() / 1000;
+	
 	private boolean systemReset = false;
+	
+	private HashMap<String, Integer> dragonKillCount = new HashMap<String, Integer>();
+	private boolean dragonAlive = false;
+	private boolean releaseMonsters = false;
 
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
@@ -165,7 +174,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		}
 
 		// HotTub Class
-		if (inventory.getItemInMainHand().getType() == Material.END_PORTAL_FRAME) {
+		if (inventory.getItemInMainHand().getType() == Material.BLAZE_ROD) {
 			event.setCancelled(true);
 			if (System.currentTimeMillis() / 1000 - hottubCooldown >= 90) {
 				hottub.invisibility(player);
@@ -297,17 +306,23 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		if (inventory.getItemInMainHand().getType() == Material.DRAGON_EGG
 				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 			event.setCancelled(true);
-			dragonClass.dragonFireball(player);
+			if (System.currentTimeMillis() / 1000 - dragonFireballCooldown >= 5) {
+				dragonClass.dragonFireball(player);
+				dragonFireballCooldown = System.currentTimeMillis() / 1000;
+			}
 		} else if (inventory.getItemInMainHand().getType() == Material.MAGMA_CREAM
 				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 			event.setCancelled(true);
-			dragonClass.regularFireball(player);
+			if (System.currentTimeMillis() / 1000 - dragonSecondaryFireballCooldown >= 60) {
+				dragonClass.regularFireball(player);
+				dragonSecondaryFireballCooldown = System.currentTimeMillis() / 1000;
+			}
 		} else if (inventory.getItemInMainHand().getType() == Material.LAVA_BUCKET
 				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 			event.setCancelled(true);
-			if (System.currentTimeMillis() / 1000 - dragonCooldown >= 5) {
+			if (System.currentTimeMillis() / 1000 - dragonLavaCooldown >= 10) {
 				dragonClass.lavaAttack(player);
-				dragonCooldown = System.currentTimeMillis() / 1000;
+				dragonLavaCooldown = System.currentTimeMillis() / 1000;
 			}
 		}
 	}
@@ -478,6 +493,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		event.getDrops().clear(); // Not sure if you need this line
+		
 	}
 
 	@EventHandler
@@ -531,6 +547,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 							if (random == 0) {
 								player.teleport(new Location(Bukkit.getWorld("MvsK"), 9, 88, 9));
 								dragonClass.giveItems(dragon);
+								dragonAlive = true;
+								dragonKillCount.put(dragon.getName(), 0);
 							}
 							random -= 1;
 						}

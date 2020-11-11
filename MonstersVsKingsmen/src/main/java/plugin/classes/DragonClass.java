@@ -59,4 +59,5 @@ public class DragonClass {
 			player.getWorld().getBlockAt(player.getTargetBlock((Set<Material>) null, 200).getLocation()).getRelative(BlockFace.UP).setType(Material.LAVA);
 		}
 	}
+	
 }
