@@ -7,8 +7,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.DragonFireball;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
@@ -23,11 +21,6 @@ public class DragonClass {
 		disguise.startDisguise();
 		disguise.setSelfDisguiseVisible(false);
 		
-		player.setFlying(true);
-		
-		EntityDamageEvent event = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.ENTITY_ATTACK, 0);
-		event.setCancelled(true);
-		
 		Inventory inventory = player.getInventory();
 		inventory.clear();
 		ItemStack dragonEgg = new ItemStack(Material.DRAGON_EGG);
@@ -36,6 +29,8 @@ public class DragonClass {
 		inventory.addItem(dragonEgg);
 		inventory.addItem(magmaCream);
 		inventory.addItem(lavaBucket);
+		
+		player.setAllowFlight(true);
 	}
 	
 	public void regularFireball(Player player) {

@@ -7,11 +7,15 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class PeenutClass {
 	public void giveItems(Player player) {
 		Inventory inventory = player.getInventory();
 		ItemStack stack = new ItemStack(Material.BLAZE_POWDER, 1);
+		ItemMeta meta = stack.getItemMeta();
+		meta.setDisplayName("Flame on!");
+		stack.setItemMeta(meta);
 		inventory.remove(Material.TURTLE_SPAWN_EGG);
 		inventory.addItem(stack);
 	}

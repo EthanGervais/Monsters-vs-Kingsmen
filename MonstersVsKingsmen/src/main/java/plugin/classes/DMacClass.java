@@ -5,6 +5,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -12,6 +13,9 @@ public class DMacClass {
 	public void giveItems(Player player) {
 		Inventory inventory = player.getInventory();
 		ItemStack stack = new ItemStack(Material.END_CRYSTAL, 1);
+		ItemMeta meta = stack.getItemMeta();
+		meta.setDisplayName("LET'S GO!");
+		stack.setItemMeta(meta);
 		inventory.remove(Material.SALMON_SPAWN_EGG);
 		inventory.addItem(stack);
 	}

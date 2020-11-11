@@ -2,12 +2,10 @@ package plugin.monstersvskingsmen;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -20,6 +18,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,6 +37,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.Inventory;
@@ -65,7 +66,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private SkeletonClass skeletonClass = new SkeletonClass();
 	private CreeperClass creeperClass = new CreeperClass();
 	private DragonClass dragonClass = new DragonClass();
-	
+
 	private long kingCooldown = System.currentTimeMillis() / 1000;
 	private long peenutCooldown = System.currentTimeMillis() / 1000;
 	private long dmacCooldown = System.currentTimeMillis() / 1000;
@@ -74,12 +75,12 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private long dragonFireballCooldown = System.currentTimeMillis() / 1000;
 	private long dragonSecondaryFireballCooldown = System.currentTimeMillis() / 1000;
 	private long dragonLavaCooldown = System.currentTimeMillis() / 1000;
-	
+
 	private boolean systemReset = false;
-	
-	private HashMap<String, Integer> dragonKillCount = new HashMap<String, Integer>();
-	private boolean dragonAlive = false;
+
 	private boolean releaseMonsters = false;
+	private int deathCounter = 0;
+	private Player dragonPlayer;
 
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
@@ -273,32 +274,38 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		// ZombieClass
 		if (inventory.getItemInMainHand().getType() == Material.ZOMBIE_SPAWN_EGG) {
 			event.setCancelled(true);
-			player.getInventory().clear();
-			player.teleport(new Location(Bukkit.getWorld("MvsK"), 9, 88, 9));
-			player.setGameMode(GameMode.SURVIVAL);
-			zombieClass.giveItems(player);
+			if (releaseMonsters) {
+				player.getInventory().clear();
+				player.teleport(new Location(Bukkit.getWorld("MvsK"), 9, 88, 9, 180, 0));
+				player.setGameMode(GameMode.SURVIVAL);
+				zombieClass.giveItems(player);
+			}
 		}
 
 		// Skeleton Class
 		if (inventory.getItemInMainHand().getType() == Material.SKELETON_SPAWN_EGG) {
 			event.setCancelled(true);
-			player.getInventory().clear();
-			player.teleport(new Location(Bukkit.getWorld("MvsK"), 9, 88, 9));
-			player.setGameMode(GameMode.SURVIVAL);
-			skeletonClass.giveItems(player);
+			if (releaseMonsters) {
+				player.getInventory().clear();
+				player.teleport(new Location(Bukkit.getWorld("MvsK"), 9, 88, 9, 180, 0));
+				player.setGameMode(GameMode.SURVIVAL);
+				skeletonClass.giveItems(player);
+			}
 		}
 
 		// Creeper Class
 		if (inventory.getItemInMainHand().getType() == Material.CREEPER_SPAWN_EGG) {
 			event.setCancelled(true);
-			player.getInventory().clear();
-			player.teleport(new Location(Bukkit.getWorld("MvsK"), 9, 88, 9));
-			player.setGameMode(GameMode.SURVIVAL);
-			creeperClass.giveItems(player);
+			if (releaseMonsters) {
+				player.getInventory().clear();
+				player.teleport(new Location(Bukkit.getWorld("MvsK"), 9, 88, 9, 180, 0));
+				player.setGameMode(GameMode.SURVIVAL);
+				creeperClass.giveItems(player);
+			}
 		} else if (inventory.getItemInMainHand().getType() == Material.GUNPOWDER
 				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 			Location loc = player.getLocation();
-			player.getWorld().createExplosion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 8, true, true);
+			player.getWorld().createExplosion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 4, false, true);
 			player.damage(1000);
 		}
 
@@ -328,9 +335,22 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler
+	public void onPlayerKick(PlayerKickEvent event) {
+		if (event.getReason().toLowerCase().contains("interact with self")) {
+			event.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
 			event.setDamage(2.5);
+		} else if (event.getEntity() == dragonPlayer && deathCounter < 8) {
+			event.setDamage(0);
+			dragonPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 0));
+			dragonPlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 0));
+		} else if (event instanceof Fireball) {
+			event.setDamage(6);
 		}
 	}
 
@@ -494,6 +514,17 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		event.getDrops().clear(); // Not sure if you need this line
 		
+		drills = builder.getDrills();
+		if (drills.containsKey(event.getEntity().getPlayer().getDisplayName())) {
+			drills.remove(event.getEntity().getPlayer().getDisplayName());
+		}
+
+		deathCounter++;
+		if (deathCounter == 8) {
+			dragonPlayer.setAllowFlight(false);
+			dragonPlayer.setHealth(0);
+			releaseMonsters = true;
+		}
 	}
 
 	@EventHandler
@@ -537,6 +568,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
 			if (player.isOp() && cmd.getName().equalsIgnoreCase("startgame")) {
+				deathCounter = 0;
 				systemReset = false;
 				SetUpLobby setup = new SetUpLobby();
 				setup.assignRoles();
@@ -544,17 +576,17 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					public void run() {
 						int random = new Random().nextInt(instance.getServer().getOnlinePlayers().size() - 1);
 						for (Player dragon : Bukkit.getOnlinePlayers()) {
-							if (random == 0) {
-								player.teleport(new Location(Bukkit.getWorld("MvsK"), 9, 88, 9));
-								dragonClass.giveItems(dragon);
-								dragonAlive = true;
-								dragonKillCount.put(dragon.getName(), 0);
+							if (random == 0 && deathCounter <= 8) {
+								dragonPlayer = dragon;
+								dragonPlayer.teleport(new Location(Bukkit.getWorld("MvsK"), 9, 88, 9, 180, 0));
+								dragonClass.giveItems(dragonPlayer);
 							}
 							random -= 1;
 						}
 					}
-				}, 36000); // 36000 time for 1 1/2 days
+				}, 600); // 36000 time for 1 1/2 days
 			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("resetgame")) {
+				deathCounter = 0;
 				if (Bukkit.getWorld("MvsK") != null) {
 					Bukkit.unloadWorld("MvsK", false);
 					File gameWorld = new File("MvsK");

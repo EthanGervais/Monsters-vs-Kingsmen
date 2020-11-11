@@ -21,7 +21,7 @@ public class Drill {
 		
 		Thread thread = new Thread() {
 			public void run() {
-				while(true) {
+				while(player.getHealth() > 0) {
 					if(isPlaced()) {
 						inv.addItem(stack);
 					}
@@ -30,10 +30,6 @@ public class Drill {
 						TimeUnit.SECONDS.sleep(2);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
-					}
-					
-					if (player.getHealth() == 0) {
-						break;
 					}
 				}
 			}
