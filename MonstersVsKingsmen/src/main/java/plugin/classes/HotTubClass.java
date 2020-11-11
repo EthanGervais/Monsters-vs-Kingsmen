@@ -10,7 +10,7 @@ import org.bukkit.potion.PotionEffectType;
 public class HotTubClass {
 	public void giveItems(Player player) {
 		Inventory inventory = player.getInventory();
-		ItemStack stack = new ItemStack(Material.DRAGON_HEAD, 1);
+		ItemStack stack = new ItemStack(Material.END_PORTAL_FRAME, 1);
 		inventory.remove(Material.ENDERMITE_SPAWN_EGG);
 		inventory.addItem(stack);
 	}

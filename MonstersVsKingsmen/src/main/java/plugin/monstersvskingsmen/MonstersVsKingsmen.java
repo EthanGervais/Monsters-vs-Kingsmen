@@ -64,11 +64,12 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private SkeletonClass skeletonClass = new SkeletonClass();
 	private CreeperClass creeperClass = new CreeperClass();
 	private DragonClass dragonClass = new DragonClass();
-	private long kingCooldown = System.currentTimeMillis()/1000;
-	private long peenutCooldown = System.currentTimeMillis()/1000;
-	private long dmacCooldown = System.currentTimeMillis()/1000;
-	private long zatrickCooldown = System.currentTimeMillis()/1000;
-	private long hottubCooldown = System.currentTimeMillis()/1000;
+	private long kingCooldown = System.currentTimeMillis() / 1000;
+	private long peenutCooldown = System.currentTimeMillis() / 1000;
+	private long dmacCooldown = System.currentTimeMillis() / 1000;
+	private long zatrickCooldown = System.currentTimeMillis() / 1000;
+	private long hottubCooldown = System.currentTimeMillis() / 1000;
+	private long dragonCooldown = System.currentTimeMillis() / 1000;
 	private boolean systemReset = false;
 
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
@@ -101,9 +102,9 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		// King Class
 		if (inventory.getItemInMainHand().getType() == Material.SLIME_BALL) {
 			event.setCancelled(true);
-			if(System.currentTimeMillis()/1000 - kingCooldown >= 20) {
+			if (System.currentTimeMillis() / 1000 - kingCooldown >= 20) {
 				king.thorsHammer(player);
-				kingCooldown = System.currentTimeMillis()/1000;
+				kingCooldown = System.currentTimeMillis() / 1000;
 			}
 		} else if (inventory.getItemInMainHand().getType() == Material.PUFFERFISH_SPAWN_EGG) {
 			event.setCancelled(true);
@@ -118,9 +119,9 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		// Peenut Class
 		if (inventory.getItemInMainHand().getType() == Material.BLAZE_POWDER) {
 			event.setCancelled(true);
-			if(System.currentTimeMillis()/1000 - peenutCooldown >= 1) {
+			if (System.currentTimeMillis() / 1000 - peenutCooldown >= 1) {
 				peenut.fireBall(player);
-				peenutCooldown = System.currentTimeMillis()/1000;
+				peenutCooldown = System.currentTimeMillis() / 1000;
 			}
 		} else if (inventory.getItemInMainHand().getType() == Material.TURTLE_SPAWN_EGG) {
 			event.setCancelled(true);
@@ -134,9 +135,9 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		// DMac Class
 		if (inventory.getItemInMainHand().getType() == Material.END_CRYSTAL) {
 			event.setCancelled(true);
-			if(System.currentTimeMillis()/1000 - dmacCooldown >= 90) {
+			if (System.currentTimeMillis() / 1000 - dmacCooldown >= 90) {
 				dmac.aoeEffect(player);
-				dmacCooldown = System.currentTimeMillis()/1000;
+				dmacCooldown = System.currentTimeMillis() / 1000;
 			}
 		} else if (inventory.getItemInMainHand().getType() == Material.SALMON_SPAWN_EGG) {
 			event.setCancelled(true);
@@ -150,9 +151,9 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		// Zatrick Class
 		if (inventory.getItemInMainHand().getType() == Material.CRIMSON_ROOTS) {
 			event.setCancelled(true);
-			if(System.currentTimeMillis()/1000 - zatrickCooldown >= 90) {
+			if (System.currentTimeMillis() / 1000 - zatrickCooldown >= 90) {
 				zatrick.needHealing(player);
-				zatrickCooldown = System.currentTimeMillis()/1000;
+				zatrickCooldown = System.currentTimeMillis() / 1000;
 			}
 		} else if (inventory.getItemInMainHand().getType() == Material.MOOSHROOM_SPAWN_EGG) {
 			event.setCancelled(true);
@@ -164,11 +165,11 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		}
 
 		// HotTub Class
-		if (inventory.getItemInMainHand().getType() == Material.DRAGON_HEAD) {
+		if (inventory.getItemInMainHand().getType() == Material.END_PORTAL_FRAME) {
 			event.setCancelled(true);
-			if(System.currentTimeMillis()/1000 - hottubCooldown >= 90) {
+			if (System.currentTimeMillis() / 1000 - hottubCooldown >= 90) {
 				hottub.invisibility(player);
-				hottubCooldown = System.currentTimeMillis()/1000;
+				hottubCooldown = System.currentTimeMillis() / 1000;
 			}
 		} else if (inventory.getItemInMainHand().getType() == Material.ENDERMITE_SPAWN_EGG) {
 			event.setCancelled(true);
@@ -208,7 +209,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			baker.giveItems(player);
 		}
 		// Eat Cake Effect
-		if(event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.CAKE) {
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.CAKE) {
 			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 50, 0));
 			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 0));
 		}
@@ -297,6 +298,17 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 			event.setCancelled(true);
 			dragonClass.dragonFireball(player);
+		} else if (inventory.getItemInMainHand().getType() == Material.MAGMA_CREAM
+				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+			event.setCancelled(true);
+			dragonClass.regularFireball(player);
+		} else if (inventory.getItemInMainHand().getType() == Material.LAVA_BUCKET
+				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+			event.setCancelled(true);
+			if (System.currentTimeMillis() / 1000 - dragonCooldown >= 5) {
+				dragonClass.lavaAttack(player);
+				dragonCooldown = System.currentTimeMillis() / 1000;
+			}
 		}
 	}
 
@@ -418,8 +430,6 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 150, 0));
 		}
 	}
-	
-	
 
 	@EventHandler
 	public void onAnvilCraft(PrepareAnvilEvent event) {
@@ -473,7 +483,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		event.getPlayer().setGameMode(GameMode.ADVENTURE);
-		if(!systemReset) {
+		if (!systemReset) {
 			Inventory inv = event.getPlayer().getInventory();
 			Random rand = new Random();
 			int monster = rand.nextInt(75);
@@ -527,7 +537,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					}
 				}, 36000); // 36000 time for 1 1/2 days
 			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("resetgame")) {
-				if(Bukkit.getWorld("MvsK") != null) {
+				if (Bukkit.getWorld("MvsK") != null) {
 					Bukkit.unloadWorld("MvsK", false);
 					File gameWorld = new File("MvsK");
 					try {
@@ -537,7 +547,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					}
 				}
 				systemReset = true;
-				for(Player p : Bukkit.getOnlinePlayers()) {
+				for (Player p : Bukkit.getOnlinePlayers()) {
 					p.getInventory().clear();
 					p.setHealth(0);
 				}

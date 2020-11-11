@@ -1,6 +1,5 @@
 package plugin.classes;
 
-import java.util.HashMap;
 import java.util.Set;
 
 import org.bukkit.Material;
@@ -12,7 +11,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.projectiles.ProjectileSource;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -32,9 +30,12 @@ public class DragonClass {
 		
 		Inventory inventory = player.getInventory();
 		inventory.clear();
-		ItemStack stack = new ItemStack(Material.DRAGON_EGG);
-		inventory.addItem(stack);
-		giveLavaBucket(player);
+		ItemStack dragonEgg = new ItemStack(Material.DRAGON_EGG);
+		ItemStack magmaCream = new ItemStack(Material.MAGMA_CREAM);
+		ItemStack lavaBucket = new ItemStack(Material.LAVA_BUCKET);
+		inventory.addItem(dragonEgg);
+		inventory.addItem(magmaCream);
+		inventory.addItem(lavaBucket);
 	}
 	
 	public void regularFireball(Player player) {
@@ -53,30 +54,9 @@ public class DragonClass {
 		fireball.setYield(5);
 	}
 	
-	public void giveLavaBucket(Player player) {
-		Inventory inventory = player.getInventory();
-		
-		if (inventory.contains(Material.LAVA_BUCKET)) {
-			return;
-		} else {
-			ItemStack lava = new ItemStack(Material.LAVA_BUCKET);
-			
-			if (inventory.contains(new ItemStack(Material.BUCKET))) {
-				inventory.remove(Material.BUCKET);
-			}
-			
-			inventory.addItem(lava);
-		}
-		
-	}
-	
-	public void lavaAttack(Player player, PlayerInteractEvent event) {
-		player = event.getPlayer();
-		PlayerInventory inventory = player.getInventory();
-		
+	public void lavaAttack(Player player) {
 		if (player.getWorld().getBlockAt(player.getTargetBlock((Set<Material>) null, 200).getLocation().add(0, 1, 0)).getType() == Material.AIR) {
 			player.getWorld().getBlockAt(player.getTargetBlock((Set<Material>) null, 200).getLocation()).getRelative(BlockFace.UP).setType(Material.LAVA);
-			inventory.setItemInMainHand(new ItemStack(Material.BUCKET));
 		}
 	}
 }
