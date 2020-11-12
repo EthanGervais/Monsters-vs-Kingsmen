@@ -10,12 +10,14 @@ public class TorchmanClass {
 	public void giveItems(Player player) {
 		Inventory inventory = player.getInventory();
 		ItemStack axeStack = new ItemStack(Material.DIAMOND_AXE, 1);
+		ItemStack flintStack = new ItemStack(Material.FLINT_AND_STEEL, 1);
 		ItemMeta meta = axeStack.getItemMeta();
 		meta.setDisplayName("Torchman's Axe");
 		axeStack.setItemMeta(meta);
 		
 		inventory.remove(Material.TROPICAL_FISH_SPAWN_EGG);
 		inventory.addItem(axeStack);
+		inventory.addItem(flintStack);
 	}
 	
 }

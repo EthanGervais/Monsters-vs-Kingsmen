@@ -15,7 +15,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 
 public class DragonClass {
-	public void giveItems(Player player) {
+	public MobDisguise giveItems(Player player) {
 		MobDisguise disguise = new MobDisguise(DisguiseType.ENDER_DRAGON);
 		disguise.setEntity(player);
 		disguise.startDisguise();
@@ -31,6 +31,8 @@ public class DragonClass {
 		inventory.addItem(lavaBucket);
 		
 		player.setAllowFlight(true);
+		
+		return disguise;
 	}
 	
 	public void regularFireball(Player player) {
