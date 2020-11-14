@@ -44,6 +44,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -77,7 +78,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private long dragonSecondaryFireballCooldown = System.currentTimeMillis() / 1000;
 	private long dragonLavaCooldown = System.currentTimeMillis() / 1000;
 
-	private boolean systemReset = false;
+	private boolean systemReset = true;
 
 	private boolean releaseMonsters = false;
 	private int deathCounter = 0;
@@ -111,8 +112,14 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		Player player = event.getPlayer();
 		PlayerInventory inventory = player.getInventory();
 
+		if (inventory.getItemInMainHand().getType() == Material.BOW
+				&& (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
+			ItemStack arrows = new ItemStack(Material.ARROW, 8);
+			player.getInventory().addItem(arrows);
+		}
+
 		// King Class
-		if (inventory.getItemInMainHand().getType() == Material.SLIME_BALL) {
+		else if (inventory.getItemInMainHand().getType() == Material.SLIME_BALL) {
 			event.setCancelled(true);
 			if (System.currentTimeMillis() / 1000 - kingCooldown >= 20) {
 				king.thorsHammer(player);
@@ -342,7 +349,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			event.setCancelled(true);
 		}
 	}
-	
+
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
@@ -374,7 +381,36 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			Location tempLoc = block.getLocation();
 			tempLoc.getBlock().setType(Material.AIR);
 			tempLoc.getWorld().dropItemNaturally(tempLoc, new ItemStack(Material.OAK_PLANKS, 1));
-
+			event.setCancelled(true);
+		} else if (event.getBlock().getType() == Material.BIRCH_LOG) { // For Torchman
+			Block block = event.getBlock();
+			Location tempLoc = block.getLocation();
+			tempLoc.getBlock().setType(Material.AIR);
+			tempLoc.getWorld().dropItemNaturally(tempLoc, new ItemStack(Material.OAK_PLANKS, 1));
+			event.setCancelled(true);
+		} else if (event.getBlock().getType() == Material.ACACIA_LOG) { // For Torchman
+			Block block = event.getBlock();
+			Location tempLoc = block.getLocation();
+			tempLoc.getBlock().setType(Material.AIR);
+			tempLoc.getWorld().dropItemNaturally(tempLoc, new ItemStack(Material.OAK_PLANKS, 1));
+			event.setCancelled(true);
+		} else if (event.getBlock().getType() == Material.DARK_OAK_LOG) { // For Torchman
+			Block block = event.getBlock();
+			Location tempLoc = block.getLocation();
+			tempLoc.getBlock().setType(Material.AIR);
+			tempLoc.getWorld().dropItemNaturally(tempLoc, new ItemStack(Material.OAK_PLANKS, 1));
+			event.setCancelled(true);
+		} else if (event.getBlock().getType() == Material.NETHERRACK) {
+			Block block = event.getBlock();
+			Location tempLoc = block.getLocation();
+			tempLoc.getBlock().setType(Material.AIR);
+			
+			ItemStack stack = new ItemStack(Material.NETHERRACK, 1);
+			ItemMeta meta = stack.getItemMeta();
+			meta.setDisplayName("Compressed Coal");
+			stack.setItemMeta(meta);
+			
+			tempLoc.getWorld().dropItemNaturally(tempLoc, stack);
 			event.setCancelled(true);
 		}
 	}
@@ -514,8 +550,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
-		event.getDrops().clear(); // Not sure if you need this line
-		
+		event.getDrops().clear();
+
 		drills = builder.getDrills();
 		if (drills.containsKey(event.getEntity().getPlayer().getDisplayName())) {
 			drills.remove(event.getEntity().getPlayer().getDisplayName());
@@ -565,6 +601,10 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				it.remove();
 			} else if (recipe != null && recipe.getResult().getType() == Material.TORCH) {
 				it.remove();
+			} else if (recipe != null && recipe.getResult().getType() == Material.DIAMOND_SWORD) {
+				it.remove();
+			} else if (recipe != null && recipe.getResult().getType() == Material.IRON_SWORD) {
+				it.remove();
 			}
 		}
 	}
@@ -604,7 +644,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				File gameWorld = new File("MvsK");
 				try {
 					FileUtils.deleteDirectory(gameWorld);
-				} catch (IOException e) {}
+				} catch (IOException e) {
+				}
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					p.getInventory().clear();
 					p.setHealth(0);

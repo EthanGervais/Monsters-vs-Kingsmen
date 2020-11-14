@@ -13,7 +13,7 @@ public class Drill {
 	private boolean placed = false;
 	private Inventory inv;
 	private Location loc;
-	private ItemStack stack = new ItemStack(Material.COBBLESTONE, 1);
+	private ItemStack stack = new ItemStack(Material.STONE_BRICKS, 1);
 	
 	public Drill(Player player) {
 		inv = Bukkit.createInventory(player, 27, "Drill");
