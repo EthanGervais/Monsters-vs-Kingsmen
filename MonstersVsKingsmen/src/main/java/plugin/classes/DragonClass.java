@@ -25,7 +25,7 @@ public class DragonClass {
 		inventory.clear();
 		ItemStack dragonEgg = new ItemStack(Material.DRAGON_EGG);
 		ItemStack magmaCream = new ItemStack(Material.MAGMA_CREAM);
-		ItemStack lavaBucket = new ItemStack(Material.LAVA_BUCKET);
+		ItemStack lavaBucket = new ItemStack(Material.FIRE_CHARGE);
 		inventory.addItem(dragonEgg);
 		inventory.addItem(magmaCream);
 		inventory.addItem(lavaBucket);
