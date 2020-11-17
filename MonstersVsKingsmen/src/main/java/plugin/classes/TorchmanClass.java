@@ -32,7 +32,7 @@ public class TorchmanClass {
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK, 1);
 		BookMeta bookMeta = (BookMeta) book.getItemMeta();
 		bookMeta.setTitle("How to be a Torchman");
-		bookMeta.setAuthor("K1ing");
+		bookMeta.setAuthor("K1ng");
 		bookMeta.setPages(pages);
 		book.setItemMeta(bookMeta);
 		inv.addItem(book);

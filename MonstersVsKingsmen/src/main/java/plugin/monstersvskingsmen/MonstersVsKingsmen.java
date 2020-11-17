@@ -2,6 +2,7 @@ package plugin.monstersvskingsmen;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -44,6 +45,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -83,8 +85,10 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 
 	private boolean releaseMonsters = false;
 	private int deathCounter = 0;
+	private int dragonDeathNumber;
 	private Player dragonPlayer;
 	private MobDisguise dragonDisguise;
+	private ItemStack ruleBook;
 
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
@@ -99,6 +103,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		baker.addFurnaceRecipe(this);
 		armorsmith.addFurnaceRecipe(this);
 		instance = this;
+		makeRuleBook();
 	}
 
 	@Override
@@ -369,12 +374,12 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
-		if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
-			event.setDamage(2.5);
-		} else if (event.getEntity() == dragonPlayer && deathCounter < 8) {
+		if (event.getEntity() == dragonPlayer && deathCounter < dragonDeathNumber) {
 			event.setDamage(0);
-			dragonPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 0));
-			dragonPlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 0));
+			dragonPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 200, 0));
+			dragonPlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 0));
+		} else if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
+			event.setDamage(2.5);
 		} else if (event instanceof Fireball) {
 			event.setDamage(6);
 		}
@@ -575,14 +580,14 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		}
 
 		deathCounter++;
-		if (deathCounter == 8) {
+		if (deathCounter >= dragonDeathNumber && releaseMonsters == false) {
+			releaseMonsters = true;
+			Bukkit.broadcastMessage(ChatColor.DARK_RED + "The monsters have been released.");
 			dragonPlayer.setAllowFlight(false);
 			dragonDisguise.stopDisguise();
 			dragonPlayer.setHealth(0);
 			dragonDisguise = null;
 			dragonPlayer = null;
-			releaseMonsters = true;
-			Bukkit.broadcastMessage(ChatColor.DARK_RED + "The monsters have been released.");
 		}
 	}
 
@@ -662,17 +667,23 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
-			if (player.isOp() && cmd.getName().equalsIgnoreCase("startgame")) {
+			if (cmd.getName().equalsIgnoreCase("rules")) {
+				player.getInventory().addItem(ruleBook);
+			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("startgame")) {
 				deathCounter = 0;
 				systemReset = false;
 				SetUpLobby setup = new SetUpLobby();
-				Bukkit.getWorld("MvsK").setTime(23000);
+				Bukkit.getWorld("MvsK").setTime(0);
 				setup.assignRoles();
+				setDragonDeathNumber();
+				for (Player p : Bukkit.getOnlinePlayers()) {
+					p.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 37000, 1));
+				}
 				MonstersVsKingsmen.scheduleSyncDelayedTask(new Runnable() {
 					public void run() {
 						int random = new Random().nextInt(instance.getServer().getOnlinePlayers().size() - 1);
 						for (Player dragon : Bukkit.getOnlinePlayers()) {
-							if (random == 0 && deathCounter <= 8) {
+							if (random == 0 && deathCounter <= dragonDeathNumber) {
 								dragonPlayer = dragon;
 								MonsterTeleport(dragonPlayer);
 								dragonDisguise = dragonClass.giveItems(dragonPlayer);
@@ -691,11 +702,12 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 							random -= 1;
 						}
 					}
-				}, 36000); // 36000 time for 1 1/2 days
+				}, 37000); // 37000 time for 1 1/2 days
 			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("resetgame")) {
-				deathCounter = 0;
-				systemReset = true;
-				releaseMonsters = false;
+				for (Player p : Bukkit.getOnlinePlayers()) {
+					p.getInventory().clear();
+					p.setHealth(0);
+				}
 				if (Bukkit.getWorld("MvsK") != null) {
 					Bukkit.unloadWorld("MvsK", false);
 				}
@@ -704,10 +716,9 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					FileUtils.deleteDirectory(gameWorld);
 				} catch (IOException e) {
 				}
-				for (Player p : Bukkit.getOnlinePlayers()) {
-					p.getInventory().clear();
-					p.setHealth(0);
-				}
+				deathCounter = 0;
+				systemReset = true;
+				releaseMonsters = false;
 				WorldCreator wc = new WorldCreator("MvsK");
 				wc.environment(World.Environment.NORMAL);
 				wc.type(WorldType.NORMAL);
@@ -715,11 +726,63 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				setMapCode(wc);
 				wc.createWorld();
 				Bukkit.broadcastMessage("[Server]: World Generated");
+			}  else if (player.isOp() && cmd.getName().equalsIgnoreCase("spawndragon")) {
+				int random = new Random().nextInt(instance.getServer().getOnlinePlayers().size() - 1);
+				for (Player dragon : Bukkit.getOnlinePlayers()) {
+					if (random == 0) {
+						dragonPlayer = dragon;
+						MonsterTeleport(dragonPlayer);
+						dragonDisguise = dragonClass.giveItems(dragonPlayer);
+
+						drills = builder.getDrills();
+						if (drills.containsKey(dragonPlayer.getDisplayName())) {
+							drills.remove(dragonPlayer.getDisplayName());
+						}
+
+						Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
+						Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
+						Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
+						Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
+						Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
+					}
+					random -= 1;
+				}
 			}
 		}
 		return true;
 	}
-
+	
+	public void setDragonDeathNumber() {
+		if(instance.getServer().getOnlinePlayers().size() >= 20) {
+			dragonDeathNumber = 8;
+		} else if (instance.getServer().getOnlinePlayers().size() < 20 && instance.getServer().getOnlinePlayers().size() >= 15) {
+			dragonDeathNumber = 5;
+		} else if (instance.getServer().getOnlinePlayers().size() < 15 && instance.getServer().getOnlinePlayers().size() >= 10) {
+			dragonDeathNumber = 3;
+		} else {
+			dragonDeathNumber = 1;
+		}
+	}
+	
+	public void makeRuleBook() {
+		List<String> pages = new ArrayList<String>();
+		pages.add("Welcome to Monsters vs Kingsmen!!\n\n"
+				+ "This is how to play the game.");
+		pages.add("The game starts in set up phase. Each player is assigned a role and each role has a specific duty to fulfill. "
+				+ "For the first two days, everyone must work together to get geared up and ready to fight.");
+		pages.add("At the start of the second night, one player will be randomly selected to spawn in as a dragon. "
+				+ "The dragon's job is to kill as many players as it can in order to start the horde of monsters.");
+		pages.add("For the rest of the game, its the monsters job to fight against the kingsmen until all are dead. "
+				+ "Meanwhile the kingsmen are fighting to stay alive.");
+		
+		ruleBook = new ItemStack(Material.WRITTEN_BOOK, 1);
+		BookMeta bookMeta = (BookMeta) ruleBook.getItemMeta();
+		bookMeta.setTitle("Monsters vs Kingsmen");
+		bookMeta.setAuthor("K1ng");
+		bookMeta.setPages(pages);
+		ruleBook.setItemMeta(bookMeta);
+	}
+	
 	public void MonsterTeleport(Player monster) {
 		if (mapCode == 1) {
 			monster.teleport(new Location(Bukkit.getWorld("MvsK"), 9, 88, 9, 180, 0));

@@ -89,37 +89,18 @@ public class SetUpLobby {
 	}
 
 	public void assignRoles() {
-
 		int counter = 0;
-		int totalCount = 0;
-		int startNobleAssign = (int)(Math.random() * (Bukkit.getOnlinePlayers().size() + 1)) - 1;
-
 		Collections.shuffle(kingsmenItems);
 		Collections.shuffle(nobleItems);
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			if (totalCount == startNobleAssign) {
+			Inventory inv = p.getInventory();
+			ItemStack spawn = kingsmenItems.get(counter);
+			inv.addItem(spawn);
+			if (counter >= kingsmenItems.size() - 1) {
 				counter = 0;
-			}
-
-			if (totalCount >= startNobleAssign && totalCount < startNobleAssign + nobleItems.size()) {
-				Inventory inv = p.getInventory();
-				ItemStack spawn = new ItemStack(nobleItems.get(counter));
-				inv.addItem(spawn);
-				counter++;
-				if (counter > nobleItems.size()) {
-					counter = 0;
-				}
 			} else {
-				Inventory inv = p.getInventory();
-				ItemStack spawn = new ItemStack(kingsmenItems.get(counter));
-				inv.addItem(spawn);
-				if (counter >= kingsmenItems.size() - 1) {
-					counter = 0;
-				} else {
-					counter++;
-				}
+				counter++;
 			}
-			totalCount++;
 		}
 	}
 

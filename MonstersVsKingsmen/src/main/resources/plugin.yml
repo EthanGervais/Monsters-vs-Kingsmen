@@ -9,3 +9,9 @@ commands:
   resetgame:
     description: This is the command to reset the game.
     usage: /<command>
+  rules:
+    description: This is the command to obtain the rule book.
+    usage: /<command>
+  spawndragon:
+    description: This is the command to manually spawn in a dragon.
+    usage: /<command>
