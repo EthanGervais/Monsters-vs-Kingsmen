@@ -5,30 +5,37 @@ import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
-public class WeaponsmithClass {
-	public void giveItems(Player player) {
-		Inventory inventory = player.getInventory();
+public class WeaponsmithClass extends PlayerClass {
+	public WeaponsmithClass() {
+		super();
 		ItemStack axeStack = new ItemStack(Material.DIAMOND_AXE, 1);
 		ItemStack anvilStack = new ItemStack(Material.ANVIL, 1);
 		ItemStack dyeStack = new ItemStack(Material.WHITE_DYE, 15);
 		ItemStack lavaStack = new ItemStack(Material.LAVA_BUCKET, 1);
 		ItemStack stringStack = new ItemStack(Material.STRING, 32);
 		ItemStack chestStack = new ItemStack(Material.CHEST, 1);
-		inventory.remove(Material.SKELETON_HORSE_SPAWN_EGG);
-		inventory.addItem(axeStack);
-		inventory.addItem(anvilStack);
-		inventory.addItem(dyeStack);
-		inventory.addItem(lavaStack);
-		inventory.addItem(stringStack);
-		inventory.addItem(chestStack);
-		infoBook(inventory);
+		ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+		items.add(axeStack);
+		items.add(anvilStack);
+		items.add(dyeStack);
+		items.add(lavaStack);
+		items.add(stringStack);
+		items.add(chestStack);
+		super.setItems(items);
+		
+		super.setBook(infoBook());
+		super.setSpawnEgg(Material.SKELETON_HORSE_SPAWN_EGG);
 	}
 	
-	public void infoBook(Inventory inv) {
+	public void setClass(Player player) {
+		super.setPlayer(player);
+		super.giveItems();
+	}
+	
+	public ItemStack infoBook() {
 		List<String> pages = new ArrayList<String>();
 		pages.add("The weaponsmith's job is to provide all the kingsmen and nobles with weapons of mass destruction.");
 		pages.add("Use the string and get some sticks in order to build bows.\n"
@@ -43,6 +50,6 @@ public class WeaponsmithClass {
 		bookMeta.setAuthor("K1ng");
 		bookMeta.setPages(pages);
 		book.setItemMeta(bookMeta);
-		inv.addItem(book);
+		return book;
 	}
 }

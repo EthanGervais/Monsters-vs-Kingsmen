@@ -1,28 +1,40 @@
 package plugin.classes;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class PeenutClass {
-	public void giveItems(Player player) {
-		Inventory inventory = player.getInventory();
-		ItemStack stack = new ItemStack(Material.BLAZE_POWDER, 1);
-		ItemMeta meta = stack.getItemMeta();
+public class PeenutClass extends PlayerClass {
+
+	public PeenutClass() {
+		super();
+		ItemStack fireStack = new ItemStack(Material.BLAZE_POWDER, 1);
+		ItemMeta meta = fireStack.getItemMeta();
 		meta.setDisplayName("Flame on!");
-		stack.setItemMeta(meta);
-		inventory.remove(Material.TURTLE_SPAWN_EGG);
-		inventory.addItem(stack);
+		fireStack.setItemMeta(meta);
+		ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+		items.add(fireStack);
+		super.setItems(items);
+
+		super.setPlayerAsNoble();
+		super.setSpawnEgg(Material.TURTLE_SPAWN_EGG);
+	}
+
+	public void setClass(Player player) {
+		super.setPlayer(player);
+		super.giveItems();
 	}
 
 	public void fireBall(Player player) {
-		if (player.getWorld().getBlockAt(player.getTargetBlock((Set<Material>) null, 200).getLocation().add(0, 1, 0)).getType() == Material.AIR) {
-			player.getWorld().getBlockAt(player.getTargetBlock((Set<Material>) null, 200).getLocation()).getRelative(BlockFace.UP).setType(Material.FIRE);
+		if (player.getWorld().getBlockAt(player.getTargetBlock((Set<Material>) null, 200).getLocation().add(0, 1, 0))
+				.getType() == Material.AIR) {
+			player.getWorld().getBlockAt(player.getTargetBlock((Set<Material>) null, 200).getLocation())
+					.getRelative(BlockFace.UP).setType(Material.FIRE);
 		}
 	}
 }
