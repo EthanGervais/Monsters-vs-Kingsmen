@@ -87,7 +87,6 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private int deathCounter = 0;
 	private int dragonDeathNumber;
 	private Player dragonPlayer;
-	private MobDisguise dragonDisguise;
 	private ItemStack ruleBook;
 
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
@@ -303,7 +302,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				player.getInventory().clear();
 				MonsterTeleport(player);
 				player.setGameMode(GameMode.SURVIVAL);
-				zombieClass.giveItems(player);
+				zombieClass.setClass(player);
 			}
 		}
 
@@ -314,7 +313,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				player.getInventory().clear();
 				MonsterTeleport(player);
 				player.setGameMode(GameMode.SURVIVAL);
-				skeletonClass.giveItems(player);
+				skeletonClass.setClass(player);
 			}
 		}
 
@@ -325,7 +324,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				player.getInventory().clear();
 				MonsterTeleport(player);
 				player.setGameMode(GameMode.SURVIVAL);
-				creeperClass.giveItems(player);
+				creeperClass.setClass(player);
 			}
 		} else if (inventory.getItemInMainHand().getType() == Material.GUNPOWDER
 				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
@@ -584,9 +583,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			releaseMonsters = true;
 			Bukkit.broadcastMessage(ChatColor.DARK_RED + "The monsters have been released.");
 			dragonPlayer.setAllowFlight(false);
-			dragonDisguise.stopDisguise();
 			dragonPlayer.setHealth(0);
-			dragonDisguise = null;
 			dragonPlayer = null;
 		}
 	}
@@ -686,7 +683,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 							if (random == 0 && deathCounter <= dragonDeathNumber) {
 								dragonPlayer = dragon;
 								MonsterTeleport(dragonPlayer);
-								dragonDisguise = dragonClass.giveItems(dragonPlayer);
+								dragonClass.setClass(dragonPlayer);
 
 								drills = builder.getDrills();
 								if (drills.containsKey(dragonPlayer.getDisplayName())) {
@@ -732,7 +729,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					if (random == 0) {
 						dragonPlayer = dragon;
 						MonsterTeleport(dragonPlayer);
-						dragonDisguise = dragonClass.giveItems(dragonPlayer);
+						dragonClass.setClass(dragonPlayer);
 
 						drills = builder.getDrills();
 						if (drills.containsKey(dragonPlayer.getDisplayName())) {
