@@ -7,28 +7,36 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.BlastingRecipe;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.plugin.Plugin;
 
-public class ArmorsmithClass {
-	public void giveItems(Player player) {
-		Inventory inventory = player.getInventory();
+public class ArmorsmithClass extends PlayerClass{
+	
+	public ArmorsmithClass(){
+		super();
 		ItemStack coalStack = new ItemStack(Material.COAL_BLOCK, 128);
 		ItemStack pistonStack = new ItemStack(Material.STICKY_PISTON, 1);
 		ItemStack leverStack = new ItemStack(Material.LEVER, 1);
 		ItemStack blastStack = new ItemStack(Material.BLAST_FURNACE, 1);
 		ItemStack pickStack = new ItemStack(Material.IRON_PICKAXE, 1);
 		ItemStack chestStack = new ItemStack(Material.CHEST, 1);
-		inventory.remove(Material.OCELOT_SPAWN_EGG);
-		inventory.addItem(coalStack);
-		inventory.addItem(pistonStack);
-		inventory.addItem(leverStack);
-		inventory.addItem(blastStack);
-		inventory.addItem(pickStack);
-		inventory.addItem(chestStack);
-		infoBook(inventory);
+		ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+		items.add(coalStack);
+		items.add(pistonStack);
+		items.add(leverStack);
+		items.add(blastStack);
+		items.add(pickStack);
+		items.add(chestStack);
+		super.setItems(items);
+		
+		super.setBook(infoBook());
+		super.setSpawnEgg(Material.OCELOT_SPAWN_EGG);
+	}
+	
+	public void setClass(Player player) {
+		super.setPlayer(player);
+		super.giveItems();
 	}
 	
 	public void addFurnaceRecipe(Plugin plugin) {
@@ -38,7 +46,7 @@ public class ArmorsmithClass {
 		plugin.getServer().addRecipe(recipe);
 	}
 	
-	public void infoBook(Inventory inv) {
+	public ItemStack infoBook() {
 		List<String> pages = new ArrayList<String>();
 		pages.add("The armorsmith's job is to prepare all kingsmen and nobles with full diamond armor sets before the hordes of monsters are released.");
 		pages.add("Diamond armor can be crafted normally at a work bench (although you will need the wood to make a crafting table).");
@@ -54,6 +62,6 @@ public class ArmorsmithClass {
 		bookMeta.setAuthor("K1ng");
 		bookMeta.setPages(pages);
 		book.setItemMeta(bookMeta);
-		inv.addItem(book);
+		return book;
 	}
 }

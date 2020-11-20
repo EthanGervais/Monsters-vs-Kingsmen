@@ -256,7 +256,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			armorsmith.giveItems(player);
+			armorsmith.setClass(player);
 		}
 
 		// Weaponsmith
