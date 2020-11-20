@@ -1,22 +1,33 @@
 package plugin.classes;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class KingClass {
-	public void giveItems(Player player) {
-		Inventory inventory = player.getInventory();
-		ItemStack stack = new ItemStack(Material.SLIME_BALL, 1);
-		ItemMeta meta = stack.getItemMeta();
+public class KingClass extends PlayerClass {
+
+	public KingClass() {
+		super();
+
+		ItemStack hammerStack = new ItemStack(Material.SLIME_BALL, 1);
+		ItemMeta meta = hammerStack.getItemMeta();
 		meta.setDisplayName("Mjölnir");
-		stack.setItemMeta(meta);
-		inventory.remove(Material.PUFFERFISH_SPAWN_EGG);
-		inventory.addItem(stack);
+		hammerStack.setItemMeta(meta);
+		ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+		items.add(hammerStack);
+		super.setItems(items);
+
+		super.setPlayerAsNoble();
+		super.setSpawnEgg(Material.PUFFERFISH_SPAWN_EGG);
+	}
+
+	public void setClass(Player player) {
+		super.setPlayer(player);
+		super.giveItems();
 	}
 
 	public void thorsHammer(Player player) {

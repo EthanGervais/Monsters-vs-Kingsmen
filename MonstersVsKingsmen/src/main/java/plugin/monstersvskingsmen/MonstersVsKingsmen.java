@@ -142,7 +142,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			king.giveItems(player);
+			king.setClass(player);
 		}
 
 		// Peenut Class
@@ -158,7 +158,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			peenut.giveItems(player);
+			peenut.setClass(player);
 		}
 
 		// DMac Class
@@ -176,7 +176,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			dmac.giveItems(player);
+			dmac.setClass(player);
 		}
 
 		// Zatrick Class
@@ -194,7 +194,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			zatrick.giveItems(player);
+			zatrick.setClass(player);
 		}
 
 		// HotTub Class
@@ -212,7 +212,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			hottub.giveItems(player);
+			hottub.setClass(player);
 		}
 
 		// Builder Class
@@ -231,7 +231,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			builder.giveItems(player);
+			builder.setClass(player);
 		}
 
 		// Baker Class
@@ -241,7 +241,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			baker.giveItems(player);
+			baker.setClass(player);
 		}
 		// Eat Cake Effect
 		else if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.CAKE) {
@@ -266,7 +266,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			weaponsmith.giveItems(player);
+			weaponsmith.setClass(player);
 		} else if (inventory.getItemInMainHand().getType() == Material.WHITE_DYE
 				&& (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR)) {
 			List<Block> los = event.getPlayer().getLineOfSight(null, 5);
@@ -286,7 +286,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			torchman.giveItems(player);
+			torchman.setClass(player);
 		} else if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.FIRE
 				&& event.getAction() == Action.LEFT_CLICK_BLOCK) {
 			if (inventory.getItemInMainHand().getType() == Material.STICK) {
