@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 
 public class CreeperClass extends MonsterClass {
 
@@ -17,11 +18,13 @@ public class CreeperClass extends MonsterClass {
 		ArrayList<ItemStack> items = new ArrayList<ItemStack>();
 		items.add(boomStack);
 		super.setItems(items);
-
-		super.setDisguise(DisguiseType.CREEPER);
 	}
 
 	public void setClass(Player player) {
+		MobDisguise disguise = new MobDisguise(DisguiseType.CREEPER);
+		disguise.setEntity(player);
+		disguise.startDisguise();
+		disguise.setSelfDisguiseVisible(false);
 		super.setPlayer(player);
 		super.spawnMonster();
 	}

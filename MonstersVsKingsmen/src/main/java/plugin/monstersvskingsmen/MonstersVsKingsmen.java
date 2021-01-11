@@ -51,27 +51,28 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import net.md_5.bungee.api.ChatColor;
 import plugin.classes.*;
 import plugin.activatedBlock.*;
 
 public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
-	private KingClass king = new KingClass();
-	private PeenutClass peenut = new PeenutClass();
-	private DMacClass dmac = new DMacClass();
-	private ZatrickClass zatrick = new ZatrickClass();
-	private HotTubClass hottub = new HotTubClass();
-	private BuilderClass builder = new BuilderClass();
-	private BakerClass baker = new BakerClass();
-	private ArmorsmithClass armorsmith = new ArmorsmithClass();
-	private WeaponsmithClass weaponsmith = new WeaponsmithClass();
-	private TorchmanClass torchman = new TorchmanClass();
+	private ArrayList<Player> nobles = new ArrayList<Player>();
+	private KingClass king;
+	private PeenutClass peenut;
+	private DMacClass dmac;
+	private ZatrickClass zatrick;
+	private HotTubClass hottub;
+	private BuilderClass builder;
+	private BakerClass baker;
+	private ArmorsmithClass armorsmith;
+	private WeaponsmithClass weaponsmith;
+	private TorchmanClass torchman;
+	
 	private ZombieClass zombieClass = new ZombieClass();
 	private SkeletonClass skeletonClass = new SkeletonClass();
 	private CreeperClass creeperClass = new CreeperClass();
 	private DragonClass dragonClass = new DragonClass();
-
+	
 	private long kingCooldown = System.currentTimeMillis() / 1000;
 	private long peenutCooldown = System.currentTimeMillis() / 1000;
 	private long dmacCooldown = System.currentTimeMillis() / 1000;
@@ -82,8 +83,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private long dragonLavaCooldown = System.currentTimeMillis() / 1000;
 
 	private boolean systemReset = true;
-
 	private boolean releaseMonsters = false;
+	private boolean dragonActive = false;
 	private int deathCounter = 0;
 	private int dragonDeathNumber;
 	private Player dragonPlayer;
@@ -98,6 +99,18 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
+		
+		king = new KingClass(nobles, king, peenut, dmac, zatrick, hottub);
+		peenut = new PeenutClass(nobles, king, peenut, dmac, zatrick, hottub);
+		dmac = new DMacClass(nobles, king, peenut, dmac, zatrick, hottub);
+		zatrick = new ZatrickClass(nobles, king, peenut, dmac, zatrick, hottub);
+		hottub = new HotTubClass(nobles, king, peenut, dmac, zatrick, hottub);
+		builder = new BuilderClass(nobles, king, peenut, dmac, zatrick, hottub);
+		baker = new BakerClass(nobles, king, peenut, dmac, zatrick, hottub);
+		armorsmith = new ArmorsmithClass(nobles, king, peenut, dmac, zatrick, hottub);
+		weaponsmith = new WeaponsmithClass(nobles, king, peenut, dmac, zatrick, hottub);
+		torchman = new TorchmanClass(nobles, king, peenut, dmac, zatrick, hottub);
+		
 		removeRecipes();
 		baker.addFurnaceRecipe(this);
 		armorsmith.addFurnaceRecipe(this);
@@ -114,6 +127,319 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		return Bukkit.getScheduler().scheduleSyncDelayedTask(instance, runnable, delay);
 	}
 
+	public boolean kingInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// King Class
+		if (inventory.getItemInMainHand().getType() == Material.SLIME_BALL) {
+			event.setCancelled(true);
+			if (System.currentTimeMillis() / 1000 - kingCooldown >= 20) {
+				king.thorsHammer(player);
+				kingCooldown = System.currentTimeMillis() / 1000;
+			} else {
+				instance.getServer().getPlayer(player.getDisplayName()).sendMessage(
+						"Cooldown: " + (20 - (System.currentTimeMillis() / 1000 - kingCooldown)) + " seconds.");
+			}
+			return true;
+		} else if (inventory.getItemInMainHand().getType() == Material.PUFFERFISH_SPAWN_EGG) {
+			event.setCancelled(true);
+
+			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
+			player.setGameMode(GameMode.SURVIVAL);
+			king.setClass(player);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean peenutInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// Peenut Class
+		if (inventory.getItemInMainHand().getType() == Material.BLAZE_POWDER) {
+			event.setCancelled(true);
+			if (System.currentTimeMillis() / 1000 - peenutCooldown >= 1) {
+				peenut.fireBall(player);
+				peenutCooldown = System.currentTimeMillis() / 1000;
+			}
+			return true;
+		} else if (inventory.getItemInMainHand().getType() == Material.TURTLE_SPAWN_EGG) {
+			event.setCancelled(true);
+			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
+			player.setGameMode(GameMode.SURVIVAL);
+			peenut.setClass(player);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean dmacInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// DMac Class
+		if (inventory.getItemInMainHand().getType() == Material.END_CRYSTAL) {
+			event.setCancelled(true);
+			if (System.currentTimeMillis() / 1000 - dmacCooldown >= 90) {
+				dmac.aoeEffect(player);
+				dmacCooldown = System.currentTimeMillis() / 1000;
+			} else {
+				instance.getServer().getPlayer(player.getDisplayName()).sendMessage(
+						"Cooldown: " + (90 - (System.currentTimeMillis() / 1000 - dmacCooldown)) + " seconds.");
+			}
+			return true;
+		} else if (inventory.getItemInMainHand().getType() == Material.SALMON_SPAWN_EGG) {
+			event.setCancelled(true);
+			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
+			player.setGameMode(GameMode.SURVIVAL);
+			dmac.setClass(player);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean zatrickInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// Zatrick Class
+		if (inventory.getItemInMainHand().getType() == Material.CRIMSON_ROOTS) {
+			event.setCancelled(true);
+			if (System.currentTimeMillis() / 1000 - zatrickCooldown >= 90) {
+				zatrick.needHealing(player);
+				zatrickCooldown = System.currentTimeMillis() / 1000;
+			} else {
+				instance.getServer().getPlayer(player.getDisplayName()).sendMessage(
+						"Cooldown: " + (90 - (System.currentTimeMillis() / 1000 - zatrickCooldown)) + " seconds.");
+			}
+			return true;
+		} else if (inventory.getItemInMainHand().getType() == Material.MOOSHROOM_SPAWN_EGG) {
+			event.setCancelled(true);
+			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
+			player.setGameMode(GameMode.SURVIVAL);
+			zatrick.setClass(player);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean hottubInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// HotTub Class
+		if (inventory.getItemInMainHand().getType() == Material.BLAZE_ROD) {
+			event.setCancelled(true);
+			if (System.currentTimeMillis() / 1000 - hottubCooldown >= 90) {
+				hottub.invisibility(player);
+				hottubCooldown = System.currentTimeMillis() / 1000;
+			} else {
+				instance.getServer().getPlayer(player.getDisplayName()).sendMessage(
+						"Cooldown: " + (90 - (System.currentTimeMillis() / 1000 - hottubCooldown)) + " seconds.");
+			}
+			return true;
+		} else if (inventory.getItemInMainHand().getType() == Material.ENDERMITE_SPAWN_EGG) {
+			event.setCancelled(true);
+			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
+			player.setGameMode(GameMode.SURVIVAL);
+			hottub.setClass(player);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean builderInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// Builder Class
+		if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.STONECUTTER
+				&& event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			event.setCancelled(true);
+			drills = builder.getDrills();
+			if (drills.containsKey(player.getDisplayName()) && drills.get(player.getDisplayName()).getBlockLocation()
+					.equals(event.getClickedBlock().getLocation())) {
+				Drill drill = drills.get(player.getDisplayName());
+				drill.openDrill(player);
+			}
+			return true;
+		} else if (inventory.getItemInMainHand().getType() == Material.ENDERMAN_SPAWN_EGG) {
+			event.setCancelled(true);
+			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
+			player.setGameMode(GameMode.SURVIVAL);
+			builder.setClass(player);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean bakerInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// Baker Class
+		if (inventory.getItemInMainHand().getType() == Material.ZOGLIN_SPAWN_EGG) {
+			event.setCancelled(true);
+			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
+			player.setGameMode(GameMode.SURVIVAL);
+			baker.setClass(player);
+			return true;
+		}
+		// Eat Cake Effect
+		else if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.CAKE) {
+			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 50, 0));
+			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 0));
+			return true;
+		}
+		return false;
+	}
+
+	public boolean armorsmithInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// Armorsmith Class
+		if (inventory.getItemInMainHand().getType() == Material.OCELOT_SPAWN_EGG) {
+			event.setCancelled(true);
+			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
+			player.setGameMode(GameMode.SURVIVAL);
+			armorsmith.setClass(player);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean weaponsmithInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// Weaponsmith
+		if (inventory.getItemInMainHand().getType() == Material.SKELETON_HORSE_SPAWN_EGG) {
+			event.setCancelled(true);
+			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
+			player.setGameMode(GameMode.SURVIVAL);
+			weaponsmith.setClass(player);
+			return true;
+		} else if (inventory.getItemInMainHand().getType() == Material.WHITE_DYE
+				&& (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR)) {
+			List<Block> los = event.getPlayer().getLineOfSight(null, 5);
+			for (Block b : los) {
+				if (b.getType() == Material.LAVA) {
+					inventory.getItemInMainHand().setAmount(inventory.getItemInMainHand().getAmount() - 1);
+					inventory.addItem(new ItemStack(Material.IRON_INGOT, 1));
+					event.setCancelled(true);
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public boolean torchmanInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// Torchman
+		if (inventory.getItemInMainHand().getType() == Material.TROPICAL_FISH_SPAWN_EGG) {
+			event.setCancelled(true);
+			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
+					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
+			player.setGameMode(GameMode.SURVIVAL);
+			torchman.setClass(player);
+			return true;
+		} else if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.FIRE
+				&& event.getAction() == Action.LEFT_CLICK_BLOCK) {
+			if (inventory.getItemInMainHand().getType() == Material.STICK) {
+				inventory.getItemInMainHand().setAmount(inventory.getItemInMainHand().getAmount() - 1);
+				inventory.addItem(new ItemStack(Material.TORCH, 1));
+				event.setCancelled(true);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public boolean zombieInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// ZombieClass
+		if (inventory.getItemInMainHand().getType() == Material.ZOMBIE_SPAWN_EGG) {
+			event.setCancelled(true);
+			if (releaseMonsters) {
+				player.getInventory().clear();
+				MonsterTeleport(player);
+				player.setGameMode(GameMode.SURVIVAL);
+				zombieClass.setClass(player);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public boolean skeletonInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// Skeleton Class
+		if (inventory.getItemInMainHand().getType() == Material.SKELETON_SPAWN_EGG) {
+			event.setCancelled(true);
+			if (releaseMonsters) {
+				player.getInventory().clear();
+				MonsterTeleport(player);
+				player.setGameMode(GameMode.SURVIVAL);
+				skeletonClass.setClass(player);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public boolean creeperInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// Creeper Class
+		if (inventory.getItemInMainHand().getType() == Material.CREEPER_SPAWN_EGG) {
+			event.setCancelled(true);
+			if (releaseMonsters) {
+				player.getInventory().clear();
+				MonsterTeleport(player);
+				player.setGameMode(GameMode.SURVIVAL);
+				creeperClass.setClass(player);
+			}
+			return true;
+		} else if (inventory.getItemInMainHand().getType() == Material.GUNPOWDER
+				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+			Location loc = player.getLocation();
+			player.getWorld().createExplosion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 4, false, true);
+			player.damage(1000);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean dragonInteractBlock(Player player, PlayerInventory inventory, PlayerInteractEvent event) {
+		// Dragon Class
+		if (inventory.getItemInMainHand().getType() == Material.DRAGON_EGG
+				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+			event.setCancelled(true);
+			if (System.currentTimeMillis() / 1000 - dragonFireballCooldown >= 5) {
+				dragonClass.dragonFireball(player);
+				dragonFireballCooldown = System.currentTimeMillis() / 1000;
+			} else {
+				instance.getServer().getPlayer(player.getDisplayName()).sendMessage("Cooldown: "
+						+ (5 - (System.currentTimeMillis() / 1000 - dragonFireballCooldown)) + " seconds.");
+			}
+			return true;
+		} else if (inventory.getItemInMainHand().getType() == Material.MAGMA_CREAM
+				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+			event.setCancelled(true);
+			if (System.currentTimeMillis() / 1000 - dragonSecondaryFireballCooldown >= 60) {
+				dragonClass.regularFireball(player);
+				dragonSecondaryFireballCooldown = System.currentTimeMillis() / 1000;
+			} else {
+				instance.getServer().getPlayer(player.getDisplayName()).sendMessage("Cooldown: "
+						+ (60 - (System.currentTimeMillis() / 1000 - dragonSecondaryFireballCooldown)) + " seconds.");
+			}
+			return true;
+		} else if (inventory.getItemInMainHand().getType() == Material.FIRE_CHARGE
+				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+			event.setCancelled(true);
+			if (System.currentTimeMillis() / 1000 - dragonLavaCooldown >= 10) {
+				dragonClass.lavaAttack(player);
+				dragonLavaCooldown = System.currentTimeMillis() / 1000;
+			} else {
+				instance.getServer().getPlayer(player.getDisplayName()).sendMessage(
+						"Cooldown: " + (10 - (System.currentTimeMillis() / 1000 - dragonLavaCooldown)) + " seconds.");
+			}
+			return true;
+		}
+		return false;
+	}
+
 	@EventHandler
 	public void onPlayerInteractBlock(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
@@ -125,243 +451,20 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			player.getInventory().addItem(arrows);
 		}
 
-		// King Class
-		else if (inventory.getItemInMainHand().getType() == Material.SLIME_BALL) {
-			event.setCancelled(true);
-			if (System.currentTimeMillis() / 1000 - kingCooldown >= 20) {
-				king.thorsHammer(player);
-				kingCooldown = System.currentTimeMillis() / 1000;
-			} else {
-				instance.getServer().getPlayer(player.getDisplayName()).sendMessage("Cooldown: " + (20 - (System.currentTimeMillis() / 1000 - kingCooldown)) + " seconds.");
-			}
-		} else if (inventory.getItemInMainHand().getType() == Material.PUFFERFISH_SPAWN_EGG) {
-			event.setCancelled(true);
-
-			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
-			player.setGameMode(GameMode.SURVIVAL);
-			king.setClass(player);
-		}
-
-		// Peenut Class
-		else if (inventory.getItemInMainHand().getType() == Material.BLAZE_POWDER) {
-			event.setCancelled(true);
-			if (System.currentTimeMillis() / 1000 - peenutCooldown >= 1) {
-				peenut.fireBall(player);
-				peenutCooldown = System.currentTimeMillis() / 1000;
-			} 
-		} else if (inventory.getItemInMainHand().getType() == Material.TURTLE_SPAWN_EGG) {
-			event.setCancelled(true);
-			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
-			player.setGameMode(GameMode.SURVIVAL);
-			peenut.setClass(player);
-		}
-
-		// DMac Class
-		else if (inventory.getItemInMainHand().getType() == Material.END_CRYSTAL) {
-			event.setCancelled(true);
-			if (System.currentTimeMillis() / 1000 - dmacCooldown >= 90) {
-				dmac.aoeEffect(player);
-				dmacCooldown = System.currentTimeMillis() / 1000;
-			} else {
-				instance.getServer().getPlayer(player.getDisplayName()).sendMessage("Cooldown: " + (90 - (System.currentTimeMillis() / 1000 - dmacCooldown)) + " seconds.");
-			}
-		} else if (inventory.getItemInMainHand().getType() == Material.SALMON_SPAWN_EGG) {
-			event.setCancelled(true);
-			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
-			player.setGameMode(GameMode.SURVIVAL);
-			dmac.setClass(player);
-		}
-
-		// Zatrick Class
-		else if (inventory.getItemInMainHand().getType() == Material.CRIMSON_ROOTS) {
-			event.setCancelled(true);
-			if (System.currentTimeMillis() / 1000 - zatrickCooldown >= 90) {
-				zatrick.needHealing(player);
-				zatrickCooldown = System.currentTimeMillis() / 1000;
-			} else {
-				instance.getServer().getPlayer(player.getDisplayName()).sendMessage("Cooldown: " + (90 - (System.currentTimeMillis() / 1000 - zatrickCooldown)) + " seconds.");
-			}
-		} else if (inventory.getItemInMainHand().getType() == Material.MOOSHROOM_SPAWN_EGG) {
-			event.setCancelled(true);
-			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
-			player.setGameMode(GameMode.SURVIVAL);
-			zatrick.setClass(player);
-		}
-
-		// HotTub Class
-		else if (inventory.getItemInMainHand().getType() == Material.BLAZE_ROD) {
-			event.setCancelled(true);
-			if (System.currentTimeMillis() / 1000 - hottubCooldown >= 90) {
-				hottub.invisibility(player);
-				hottubCooldown = System.currentTimeMillis() / 1000;
-			} else {
-				instance.getServer().getPlayer(player.getDisplayName()).sendMessage("Cooldown: " + (90 - (System.currentTimeMillis() / 1000 - hottubCooldown)) + " seconds.");
-			}
-		} else if (inventory.getItemInMainHand().getType() == Material.ENDERMITE_SPAWN_EGG) {
-			event.setCancelled(true);
-			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
-			player.setGameMode(GameMode.SURVIVAL);
-			hottub.setClass(player);
-		}
-
-		// Builder Class
-		else if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.STONECUTTER
-				&& event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			event.setCancelled(true);
-			drills = builder.getDrills();
-			if (drills.containsKey(player.getDisplayName()) && drills.get(player.getDisplayName()).getBlockLocation()
-					.equals(event.getClickedBlock().getLocation())) {
-				Drill drill = drills.get(player.getDisplayName());
-				drill.openDrill(player);
-			}
-		} else if (inventory.getItemInMainHand().getType() == Material.ENDERMAN_SPAWN_EGG) {
-			event.setCancelled(true);
-			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
-			player.setGameMode(GameMode.SURVIVAL);
-			builder.setClass(player);
-		}
-
-		// Baker Class
-		else if (inventory.getItemInMainHand().getType() == Material.ZOGLIN_SPAWN_EGG) {
-			event.setCancelled(true);
-			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
-			player.setGameMode(GameMode.SURVIVAL);
-			baker.setClass(player);
-		}
-		// Eat Cake Effect
-		else if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.CAKE) {
-			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 50, 0));
-			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 0));
-		}
-
-		// Armorsmith Class
-		else if (inventory.getItemInMainHand().getType() == Material.OCELOT_SPAWN_EGG) {
-			event.setCancelled(true);
-			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
-			player.setGameMode(GameMode.SURVIVAL);
-			armorsmith.setClass(player);
-		}
-
-		// Weaponsmith
-		else if (inventory.getItemInMainHand().getType() == Material.SKELETON_HORSE_SPAWN_EGG) {
-			event.setCancelled(true);
-			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
-			player.setGameMode(GameMode.SURVIVAL);
-			weaponsmith.setClass(player);
-		} else if (inventory.getItemInMainHand().getType() == Material.WHITE_DYE
-				&& (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR)) {
-			List<Block> los = event.getPlayer().getLineOfSight(null, 5);
-			for (Block b : los) {
-				if (b.getType() == Material.LAVA) {
-					inventory.getItemInMainHand().setAmount(inventory.getItemInMainHand().getAmount() - 1);
-					inventory.addItem(new ItemStack(Material.IRON_INGOT, 1));
-					event.setCancelled(true);
-				}
-			}
-		}
-
-		// Torchman
-		else if (inventory.getItemInMainHand().getType() == Material.TROPICAL_FISH_SPAWN_EGG) {
-			event.setCancelled(true);
-			player.teleport(new Location(Bukkit.getWorld("MvsK"), Bukkit.getWorld("MvsK").getSpawnLocation().getX(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
-					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
-			player.setGameMode(GameMode.SURVIVAL);
-			torchman.setClass(player);
-		} else if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.FIRE
-				&& event.getAction() == Action.LEFT_CLICK_BLOCK) {
-			if (inventory.getItemInMainHand().getType() == Material.STICK) {
-				inventory.getItemInMainHand().setAmount(inventory.getItemInMainHand().getAmount() - 1);
-				inventory.addItem(new ItemStack(Material.TORCH, 1));
-				event.setCancelled(true);
-			}
-		}
-
-		// ZombieClass
-		else if (inventory.getItemInMainHand().getType() == Material.ZOMBIE_SPAWN_EGG) {
-			event.setCancelled(true);
-			if (releaseMonsters) {
-				player.getInventory().clear();
-				MonsterTeleport(player);
-				player.setGameMode(GameMode.SURVIVAL);
-				zombieClass.setClass(player);
-			}
-		}
-
-		// Skeleton Class
-		else if (inventory.getItemInMainHand().getType() == Material.SKELETON_SPAWN_EGG) {
-			event.setCancelled(true);
-			if (releaseMonsters) {
-				player.getInventory().clear();
-				MonsterTeleport(player);
-				player.setGameMode(GameMode.SURVIVAL);
-				skeletonClass.setClass(player);
-			}
-		}
-
-		// Creeper Class
-		else if (inventory.getItemInMainHand().getType() == Material.CREEPER_SPAWN_EGG) {
-			event.setCancelled(true);
-			if (releaseMonsters) {
-				player.getInventory().clear();
-				MonsterTeleport(player);
-				player.setGameMode(GameMode.SURVIVAL);
-				creeperClass.setClass(player);
-			}
-		} else if (inventory.getItemInMainHand().getType() == Material.GUNPOWDER
-				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-			Location loc = player.getLocation();
-			player.getWorld().createExplosion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 4, false, true);
-			player.damage(1000);
-		}
-
-		// Dragon Class
-		else if (inventory.getItemInMainHand().getType() == Material.DRAGON_EGG
-				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-			event.setCancelled(true);
-			if (System.currentTimeMillis() / 1000 - dragonFireballCooldown >= 5) {
-				dragonClass.dragonFireball(player);
-				dragonFireballCooldown = System.currentTimeMillis() / 1000;
-			} else {
-				instance.getServer().getPlayer(player.getDisplayName()).sendMessage("Cooldown: " + (5 - (System.currentTimeMillis() / 1000 - dragonFireballCooldown)) + " seconds.");
-			}
-		} else if (inventory.getItemInMainHand().getType() == Material.MAGMA_CREAM
-				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-			event.setCancelled(true);
-			if (System.currentTimeMillis() / 1000 - dragonSecondaryFireballCooldown >= 60) {
-				dragonClass.regularFireball(player);
-				dragonSecondaryFireballCooldown = System.currentTimeMillis() / 1000;
-			} else {
-				instance.getServer().getPlayer(player.getDisplayName()).sendMessage("Cooldown: " + (60 - (System.currentTimeMillis() / 1000 - dragonSecondaryFireballCooldown)) + " seconds.");
-			}
-		} else if (inventory.getItemInMainHand().getType() == Material.FIRE_CHARGE
-				&& (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-			event.setCancelled(true);
-			if (System.currentTimeMillis() / 1000 - dragonLavaCooldown >= 10) {
-				dragonClass.lavaAttack(player);
-				dragonLavaCooldown = System.currentTimeMillis() / 1000;
-			} else {
-				instance.getServer().getPlayer(player.getDisplayName()).sendMessage("Cooldown: " + (10 - (System.currentTimeMillis() / 1000 - dragonLavaCooldown)) + " seconds.");
-			}
-		}
+		if (kingInteractBlock(player, inventory, event)) { return; }
+		else if (peenutInteractBlock(player, inventory, event)) { return; }
+		else if (dmacInteractBlock(player, inventory, event)) { return; }
+		else if (zatrickInteractBlock(player, inventory, event)) { return; }
+		else if (hottubInteractBlock(player, inventory, event)) { return; }
+		else if (builderInteractBlock(player, inventory, event)) { return; }
+		else if (bakerInteractBlock(player, inventory, event)) { return; }
+		else if (armorsmithInteractBlock(player, inventory, event)) { return; }
+		else if (weaponsmithInteractBlock(player, inventory, event)) { return; }
+		else if (torchmanInteractBlock(player, inventory, event)) { return; }
+		else if (zombieInteractBlock(player, inventory, event)) { return; }
+		else if (skeletonInteractBlock(player, inventory, event)) { return; }
+		else if (creeperInteractBlock(player, inventory, event)) { return; }
+		else if (dragonInteractBlock(player, inventory, event)) { return; }
 	}
 
 	@EventHandler
@@ -579,12 +682,13 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		}
 
 		deathCounter++;
-		if (deathCounter >= dragonDeathNumber && releaseMonsters == false) {
+		if (deathCounter >= dragonDeathNumber && releaseMonsters == false && dragonActive == true) {
 			releaseMonsters = true;
 			Bukkit.broadcastMessage(ChatColor.DARK_RED + "The monsters have been released.");
 			dragonPlayer.setAllowFlight(false);
 			dragonPlayer.setHealth(0);
 			dragonPlayer = null;
+			dragonActive = false;
 		}
 	}
 
@@ -667,15 +771,16 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			if (cmd.getName().equalsIgnoreCase("rules")) {
 				player.getInventory().addItem(ruleBook);
 			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("startgame")) {
+				for (Player p : Bukkit.getOnlinePlayers()) {
+					p.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 37000, 1));
+				}
 				deathCounter = 0;
 				systemReset = false;
 				SetUpLobby setup = new SetUpLobby();
 				Bukkit.getWorld("MvsK").setTime(0);
 				setup.assignRoles();
+				nobles = setup.getNobles();
 				setDragonDeathNumber();
-				for (Player p : Bukkit.getOnlinePlayers()) {
-					p.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 37000, 1));
-				}
 				MonstersVsKingsmen.scheduleSyncDelayedTask(new Runnable() {
 					public void run() {
 						int random = new Random().nextInt(instance.getServer().getOnlinePlayers().size() - 1);
@@ -683,7 +788,9 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 							if (random == 0 && deathCounter <= dragonDeathNumber) {
 								dragonPlayer = dragon;
 								MonsterTeleport(dragonPlayer);
+								dragonPlayer.getInventory().clear();
 								dragonClass.setClass(dragonPlayer);
+								dragonActive = true;
 
 								drills = builder.getDrills();
 								if (drills.containsKey(dragonPlayer.getDisplayName())) {
@@ -698,9 +805,13 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 							}
 							random -= 1;
 						}
+						if (deathCounter > dragonDeathNumber) {
+							releaseMonsters = true;
+							Bukkit.broadcastMessage(ChatColor.DARK_RED + "The monsters have been released.");
+						}
 					}
 				}, 37000); // 37000 time for 1 1/2 days
-			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("resetgame")) {
+			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("destroyworld")) {
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					p.getInventory().clear();
 					p.setHealth(0);
@@ -711,19 +822,22 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				File gameWorld = new File("MvsK");
 				try {
 					FileUtils.deleteDirectory(gameWorld);
+					Bukkit.broadcastMessage("[Server]: World destroyed");
 				} catch (IOException e) {
+					Bukkit.broadcastMessage("[Server]: World Could not be destroyed");
 				}
 				deathCounter = 0;
 				systemReset = true;
 				releaseMonsters = false;
+			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("buildworld")) {
 				WorldCreator wc = new WorldCreator("MvsK");
 				wc.environment(World.Environment.NORMAL);
 				wc.type(WorldType.NORMAL);
 				wc.generateStructures(false);
 				setMapCode(wc);
 				wc.createWorld();
-				Bukkit.broadcastMessage("[Server]: World Generated");
-			}  else if (player.isOp() && cmd.getName().equalsIgnoreCase("spawndragon")) {
+				Bukkit.broadcastMessage("[Server]: World generated");
+			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("spawndragon")) {
 				int random = new Random().nextInt(instance.getServer().getOnlinePlayers().size() - 1);
 				for (Player dragon : Bukkit.getOnlinePlayers()) {
 					if (random == 0) {
@@ -748,30 +862,32 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		}
 		return true;
 	}
-	
+
 	public void setDragonDeathNumber() {
-		if(instance.getServer().getOnlinePlayers().size() >= 20) {
+		if (instance.getServer().getOnlinePlayers().size() >= 20) {
 			dragonDeathNumber = 8;
-		} else if (instance.getServer().getOnlinePlayers().size() < 20 && instance.getServer().getOnlinePlayers().size() >= 15) {
+		} else if (instance.getServer().getOnlinePlayers().size() < 20
+				&& instance.getServer().getOnlinePlayers().size() >= 15) {
 			dragonDeathNumber = 5;
-		} else if (instance.getServer().getOnlinePlayers().size() < 15 && instance.getServer().getOnlinePlayers().size() >= 10) {
+		} else if (instance.getServer().getOnlinePlayers().size() < 15
+				&& instance.getServer().getOnlinePlayers().size() >= 10) {
 			dragonDeathNumber = 3;
 		} else {
 			dragonDeathNumber = 1;
 		}
 	}
-	
+
 	public void makeRuleBook() {
 		List<String> pages = new ArrayList<String>();
-		pages.add("Welcome to Monsters vs Kingsmen!!\n\n"
-				+ "This is how to play the game.");
-		pages.add("The game starts in set up phase. Each player is assigned a role and each role has a specific duty to fulfill. "
-				+ "For the first two days, everyone must work together to get geared up and ready to fight.");
+		pages.add("Welcome to Monsters vs Kingsmen!!\n\n" + "This is how to play the game.");
+		pages.add(
+				"The game starts in set up phase. Each player is assigned a role and each role has a specific duty to fulfill. "
+						+ "For the first two days, everyone must work together to get geared up and ready to fight.");
 		pages.add("At the start of the second night, one player will be randomly selected to spawn in as a dragon. "
 				+ "The dragon's job is to kill as many players as it can in order to start the horde of monsters.");
 		pages.add("For the rest of the game, its the monsters job to fight against the kingsmen until all are dead. "
 				+ "Meanwhile the kingsmen are fighting to stay alive.");
-		
+
 		ruleBook = new ItemStack(Material.WRITTEN_BOOK, 1);
 		BookMeta bookMeta = (BookMeta) ruleBook.getItemMeta();
 		bookMeta.setTitle("Monsters vs Kingsmen");
@@ -779,7 +895,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		bookMeta.setPages(pages);
 		ruleBook.setItemMeta(bookMeta);
 	}
-	
+
 	public void MonsterTeleport(Player monster) {
 		if (mapCode == 1) {
 			monster.teleport(new Location(Bukkit.getWorld("MvsK"), 9, 88, 9, 180, 0));
@@ -796,7 +912,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 
 	public void setMapCode(WorldCreator wc) {
 		mapCode++;
-		
+
 		if (mapCode == 6) {
 			mapCode = 1;
 		}

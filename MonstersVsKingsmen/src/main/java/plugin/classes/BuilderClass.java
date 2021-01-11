@@ -14,8 +14,8 @@ import org.bukkit.inventory.meta.BookMeta;
 public class BuilderClass extends PlayerClass {
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
-	public BuilderClass() {
-		super();
+	public BuilderClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
+		super(nobles, king, peenut, dmac, zatrick, hottub);
 
 		ItemStack stoneStack = new ItemStack(Material.STONE_BRICKS, 128);
 		ItemStack drillStack = new ItemStack(Material.STONECUTTER, 1);

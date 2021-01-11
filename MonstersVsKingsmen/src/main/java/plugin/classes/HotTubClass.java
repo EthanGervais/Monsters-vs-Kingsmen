@@ -11,8 +11,8 @@ import org.bukkit.potion.PotionEffectType;
 
 public class HotTubClass extends PlayerClass {
 
-	public HotTubClass() {
-		super();
+	public HotTubClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
+		super(nobles, king, peenut, dmac, zatrick, hottub);
 
 		ItemStack invisStack = new ItemStack(Material.BLAZE_ROD, 1);
 		ItemMeta meta = invisStack.getItemMeta();

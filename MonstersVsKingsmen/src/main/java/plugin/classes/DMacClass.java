@@ -12,8 +12,8 @@ import org.bukkit.potion.PotionEffectType;
 
 public class DMacClass extends PlayerClass {
 
-	public DMacClass() {
-		super();
+	public DMacClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
+		super(nobles, king, peenut, dmac, zatrick, hottub);
 
 		ItemStack aoeStack = new ItemStack(Material.END_CRYSTAL, 1);
 		ItemMeta meta = aoeStack.getItemMeta();

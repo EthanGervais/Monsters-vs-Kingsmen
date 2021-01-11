@@ -15,6 +15,7 @@ public class SetUpLobby {
 	private ItemMeta meta;
 	private ArrayList<ItemStack> nobleItems = new ArrayList<ItemStack>();
 	private ArrayList<ItemStack> kingsmenItems = new ArrayList<ItemStack>();
+	private ArrayList<Player> nobles = new ArrayList<Player>();
 
 	public SetUpLobby() {
 		// K1ng Item
@@ -102,6 +103,10 @@ public class SetUpLobby {
 				counter++;
 			}
 		}
+	}
+	
+	public ArrayList<Player> getNobles() {
+		return nobles;
 	}
 
 }

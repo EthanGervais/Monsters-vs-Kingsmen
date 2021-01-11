@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 
 public class DragonClass extends MonsterClass {
 
@@ -26,12 +27,14 @@ public class DragonClass extends MonsterClass {
 		items.add(magmaCream);
 		items.add(lavaBucket);
 		super.setItems(items);
-
-		super.setDisguise(DisguiseType.ENDER_DRAGON);
 	}
 
 	public void setClass(Player player) {
 		player.setAllowFlight(true);
+		MobDisguise disguise = new MobDisguise(DisguiseType.ENDER_DRAGON);
+		disguise.setEntity(player);
+		disguise.startDisguise();
+		disguise.setSelfDisguiseVisible(false);
 		super.setPlayer(player);
 		super.spawnMonster();
 	}

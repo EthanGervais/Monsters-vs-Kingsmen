@@ -6,8 +6,11 @@ commands:
   startgame:
     description: This is the command to start the game.
     usage: /<command>
-  resetgame:
-    description: This is the command to reset the game.
+  destroyworld:
+    description: This is the command to destroy the map.
+    usage: /<command>
+  buildworld:
+    description: This is the command to build a map.
     usage: /<command>
   rules:
     description: This is the command to obtain the rule book.

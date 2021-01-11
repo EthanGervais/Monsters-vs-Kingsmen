@@ -13,8 +13,8 @@ import org.bukkit.plugin.Plugin;
 
 public class BakerClass extends PlayerClass {
 
-	public BakerClass() {
-		super();
+	public BakerClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
+		super(nobles, king, peenut, dmac, zatrick, hottub);
 		
 		ItemStack seedStack = new ItemStack(Material.WHEAT_SEEDS, 64);
 		ItemStack coalStack = new ItemStack(Material.COAL, 64);

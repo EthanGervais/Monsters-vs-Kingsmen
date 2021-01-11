@@ -10,8 +10,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class KingClass extends PlayerClass {
 
-	public KingClass() {
-		super();
+	public KingClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
+		super(nobles, king, peenut, dmac, zatrick, hottub);
 
 		ItemStack hammerStack = new ItemStack(Material.SLIME_BALL, 1);
 		ItemMeta meta = hammerStack.getItemMeta();
