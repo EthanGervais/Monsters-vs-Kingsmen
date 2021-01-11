@@ -9,8 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 public class WeaponsmithClass extends PlayerClass {
-	public WeaponsmithClass() {
-		super();
+	public WeaponsmithClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
+		super(nobles, king, peenut, dmac, zatrick, hottub);
 		ItemStack axeStack = new ItemStack(Material.DIAMOND_AXE, 1);
 		ItemStack anvilStack = new ItemStack(Material.ANVIL, 1);
 		ItemStack dyeStack = new ItemStack(Material.WHITE_DYE, 15);

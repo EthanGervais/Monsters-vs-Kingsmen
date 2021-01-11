@@ -11,8 +11,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class PeenutClass extends PlayerClass {
 
-	public PeenutClass() {
-		super();
+	public PeenutClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
+		super(nobles, king, peenut, dmac, zatrick, hottub);
 		ItemStack fireStack = new ItemStack(Material.BLAZE_POWDER, 1);
 		ItemMeta meta = fireStack.getItemMeta();
 		meta.setDisplayName("Flame on!");

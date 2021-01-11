@@ -10,8 +10,8 @@ import org.bukkit.inventory.meta.BookMeta;
 
 public class TorchmanClass extends PlayerClass {
 	
-	public TorchmanClass() {
-		super();
+	public TorchmanClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
+		super(nobles, king, peenut, dmac, zatrick, hottub);
 		ItemStack axeStack = new ItemStack(Material.DIAMOND_AXE, 1);
 		ItemStack flintStack = new ItemStack(Material.FLINT_AND_STEEL, 1);
 		ArrayList<ItemStack> items = new ArrayList<ItemStack>();
