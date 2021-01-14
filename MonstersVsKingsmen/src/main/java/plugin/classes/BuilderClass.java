@@ -14,8 +14,8 @@ import org.bukkit.inventory.meta.BookMeta;
 public class BuilderClass extends PlayerClass {
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
-	public BuilderClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
-		super(nobles, king, peenut, dmac, zatrick, hottub);
+	public BuilderClass() {
+		super();
 
 		ItemStack stoneStack = new ItemStack(Material.STONE_BRICKS, 128);
 		ItemStack drillStack = new ItemStack(Material.STONECUTTER, 1);
@@ -30,11 +30,11 @@ public class BuilderClass extends PlayerClass {
 		super.setSpawnEgg(Material.ENDERMAN_SPAWN_EGG);
 	}
 
-	public void setClass(Player player) {
+	public void setClass(Player player, ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
 		Drill drill = new Drill(player);
 		drills.put(player.getDisplayName(), drill);
 		super.setPlayer(player);
-		super.giveItems();
+		super.giveItems(nobles, king, peenut, dmac, zatrick, hottub);
 	}
 
 	public Hashtable<String, Drill> getDrills() {

@@ -13,8 +13,8 @@ import org.bukkit.plugin.Plugin;
 
 public class BakerClass extends PlayerClass {
 
-	public BakerClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
-		super(nobles, king, peenut, dmac, zatrick, hottub);
+	public BakerClass() {
+		super();
 		
 		ItemStack seedStack = new ItemStack(Material.WHEAT_SEEDS, 64);
 		ItemStack coalStack = new ItemStack(Material.COAL, 64);
@@ -35,9 +35,9 @@ public class BakerClass extends PlayerClass {
 		super.setSpawnEgg(Material.ZOGLIN_SPAWN_EGG);
 	}
 
-	public void setClass(Player player) {
+	public void setClass(Player player, ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
 		super.setPlayer(player);
-		super.giveItems();
+		super.giveItems(nobles, king, peenut, dmac, zatrick, hottub);
 	}
 
 	public void addFurnaceRecipe(Plugin plugin) {

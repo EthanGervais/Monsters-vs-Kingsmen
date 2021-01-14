@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -57,16 +58,16 @@ import plugin.activatedBlock.*;
 
 public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private ArrayList<Player> nobles = new ArrayList<Player>();
-	private KingClass king;
-	private PeenutClass peenut;
-	private DMacClass dmac;
-	private ZatrickClass zatrick;
-	private HotTubClass hottub;
-	private BuilderClass builder;
-	private BakerClass baker;
-	private ArmorsmithClass armorsmith;
-	private WeaponsmithClass weaponsmith;
-	private TorchmanClass torchman;
+	private KingClass king = new KingClass();
+	private PeenutClass peenut = new PeenutClass();
+	private DMacClass dmac = new DMacClass();
+	private ZatrickClass zatrick = new ZatrickClass();
+	private HotTubClass hottub = new HotTubClass(); 
+	private BuilderClass builder = new BuilderClass();
+	private BakerClass baker = new BakerClass();
+	private ArmorsmithClass armorsmith = new ArmorsmithClass();
+	private WeaponsmithClass weaponsmith = new WeaponsmithClass();
+	private TorchmanClass torchman = new TorchmanClass();
 	
 	private ZombieClass zombieClass = new ZombieClass();
 	private SkeletonClass skeletonClass = new SkeletonClass();
@@ -98,19 +99,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
-		getServer().getPluginManager().registerEvents(this, this);
-		
-		king = new KingClass(nobles, king, peenut, dmac, zatrick, hottub);
-		peenut = new PeenutClass(nobles, king, peenut, dmac, zatrick, hottub);
-		dmac = new DMacClass(nobles, king, peenut, dmac, zatrick, hottub);
-		zatrick = new ZatrickClass(nobles, king, peenut, dmac, zatrick, hottub);
-		hottub = new HotTubClass(nobles, king, peenut, dmac, zatrick, hottub);
-		builder = new BuilderClass(nobles, king, peenut, dmac, zatrick, hottub);
-		baker = new BakerClass(nobles, king, peenut, dmac, zatrick, hottub);
-		armorsmith = new ArmorsmithClass(nobles, king, peenut, dmac, zatrick, hottub);
-		weaponsmith = new WeaponsmithClass(nobles, king, peenut, dmac, zatrick, hottub);
-		torchman = new TorchmanClass(nobles, king, peenut, dmac, zatrick, hottub);
-		
+		getServer().getPluginManager().registerEvents(this, this);	
 		removeRecipes();
 		baker.addFurnaceRecipe(this);
 		armorsmith.addFurnaceRecipe(this);
@@ -146,7 +135,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			king.setClass(player);
+			king.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 			return true;
 		}
 		return false;
@@ -167,7 +156,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			peenut.setClass(player);
+			peenut.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 			return true;
 		}
 		return false;
@@ -191,7 +180,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			dmac.setClass(player);
+			dmac.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 			return true;
 		}
 		return false;
@@ -215,7 +204,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			zatrick.setClass(player);
+			zatrick.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 			return true;
 		}
 		return false;
@@ -239,7 +228,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			hottub.setClass(player);
+			hottub.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 			return true;
 		}
 		return false;
@@ -263,7 +252,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			builder.setClass(player);
+			builder.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 			return true;
 		}
 		return false;
@@ -277,7 +266,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			baker.setClass(player);
+			baker.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 			return true;
 		}
 		// Eat Cake Effect
@@ -297,7 +286,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			armorsmith.setClass(player);
+			armorsmith.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 			return true;
 		}
 		return false;
@@ -311,7 +300,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			weaponsmith.setClass(player);
+			weaponsmith.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 			return true;
 		} else if (inventory.getItemInMainHand().getType() == Material.WHITE_DYE
 				&& (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR)) {
@@ -336,7 +325,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					Bukkit.getWorld("MvsK").getSpawnLocation().getY(),
 					Bukkit.getWorld("MvsK").getSpawnLocation().getZ()));
 			player.setGameMode(GameMode.SURVIVAL);
-			torchman.setClass(player);
+			torchman.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 			return true;
 		} else if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.FIRE
 				&& event.getAction() == Action.LEFT_CLICK_BLOCK) {
@@ -765,85 +754,28 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		}
 	}
 
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (sender instanceof Player) {
-			Player player = (Player) sender;
-			if (cmd.getName().equalsIgnoreCase("rules")) {
-				player.getInventory().addItem(ruleBook);
-			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("startgame")) {
-				for (Player p : Bukkit.getOnlinePlayers()) {
-					p.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 37000, 1));
-				}
-				deathCounter = 0;
-				systemReset = false;
-				SetUpLobby setup = new SetUpLobby();
-				Bukkit.getWorld("MvsK").setTime(0);
-				setup.assignRoles();
-				nobles = setup.getNobles();
-				setDragonDeathNumber();
-				MonstersVsKingsmen.scheduleSyncDelayedTask(new Runnable() {
-					public void run() {
-						int random = new Random().nextInt(instance.getServer().getOnlinePlayers().size() - 1);
-						for (Player dragon : Bukkit.getOnlinePlayers()) {
-							if (random == 0 && deathCounter <= dragonDeathNumber) {
-								dragonPlayer = dragon;
-								MonsterTeleport(dragonPlayer);
-								dragonPlayer.getInventory().clear();
-								dragonClass.setClass(dragonPlayer);
-								dragonActive = true;
-
-								drills = builder.getDrills();
-								if (drills.containsKey(dragonPlayer.getDisplayName())) {
-									drills.remove(dragonPlayer.getDisplayName());
-								}
-
-								Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
-								Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
-								Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
-								Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
-								Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
-							}
-							random -= 1;
-						}
-						if (deathCounter > dragonDeathNumber) {
-							releaseMonsters = true;
-							Bukkit.broadcastMessage(ChatColor.DARK_RED + "The monsters have been released.");
-						}
-					}
-				}, 37000); // 37000 time for 1 1/2 days
-			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("destroyworld")) {
-				for (Player p : Bukkit.getOnlinePlayers()) {
-					p.getInventory().clear();
-					p.setHealth(0);
-				}
-				if (Bukkit.getWorld("MvsK") != null) {
-					Bukkit.unloadWorld("MvsK", false);
-				}
-				File gameWorld = new File("MvsK");
-				try {
-					FileUtils.deleteDirectory(gameWorld);
-					Bukkit.broadcastMessage("[Server]: World destroyed");
-				} catch (IOException e) {
-					Bukkit.broadcastMessage("[Server]: World Could not be destroyed");
-				}
-				deathCounter = 0;
-				systemReset = true;
-				releaseMonsters = false;
-			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("buildworld")) {
-				WorldCreator wc = new WorldCreator("MvsK");
-				wc.environment(World.Environment.NORMAL);
-				wc.type(WorldType.NORMAL);
-				wc.generateStructures(false);
-				setMapCode(wc);
-				wc.createWorld();
-				Bukkit.broadcastMessage("[Server]: World generated");
-			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("spawndragon")) {
+	public void startGameCommand() {
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			p.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 37000, 1));
+		}
+		deathCounter = 0;
+		systemReset = false;
+		SetUpLobby setup = new SetUpLobby();
+		Bukkit.getWorld("MvsK").setTime(0);
+		setup.assignRoles();
+		setup.assignNobles(instance);
+		nobles = setup.getNobles();
+		setDragonDeathNumber();
+		MonstersVsKingsmen.scheduleSyncDelayedTask(new Runnable() {
+			public void run() {
 				int random = new Random().nextInt(instance.getServer().getOnlinePlayers().size() - 1);
 				for (Player dragon : Bukkit.getOnlinePlayers()) {
-					if (random == 0) {
+					if (random == 0 && deathCounter <= dragonDeathNumber) {
 						dragonPlayer = dragon;
 						MonsterTeleport(dragonPlayer);
+						dragonPlayer.getInventory().clear();
 						dragonClass.setClass(dragonPlayer);
+						dragonActive = true;
 
 						drills = builder.getDrills();
 						if (drills.containsKey(dragonPlayer.getDisplayName())) {
@@ -858,6 +790,81 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					}
 					random -= 1;
 				}
+				if (deathCounter > dragonDeathNumber) {
+					releaseMonsters = true;
+					Bukkit.broadcastMessage(ChatColor.DARK_RED + "The monsters have been released.");
+				}
+			}
+		}, 37000); // 37000 time for 1 1/2 days
+	}
+	
+	public void destroyWorldCommand() {
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			p.getInventory().clear();
+			p.setHealth(0);
+		}
+		if (Bukkit.getWorld("MvsK") != null) {
+			Bukkit.unloadWorld("MvsK", false);
+		}
+		File gameWorld = new File("MvsK");
+		try {
+			FileUtils.deleteDirectory(gameWorld);
+			Bukkit.broadcastMessage("[Server]: World destroyed");
+		} catch (IOException e) {
+			Bukkit.broadcastMessage("[Server]: World Could not be destroyed");
+		}
+		deathCounter = 0;
+		systemReset = true;
+		releaseMonsters = false;
+	}
+	
+	public void buildWorldCommand() {
+		WorldCreator wc = new WorldCreator("MvsK");
+		wc.environment(World.Environment.NORMAL);
+		wc.type(WorldType.NORMAL);
+		wc.generateStructures(false);
+		setMapCode(wc);
+		wc.createWorld();
+		Bukkit.broadcastMessage("[Server]: World generated");
+	}
+	
+	public void spawnDragonCommand() {
+		int random = new Random().nextInt(instance.getServer().getOnlinePlayers().size() - 1);
+		for (Player dragon : Bukkit.getOnlinePlayers()) {
+			if (random == 0) {
+				dragonPlayer = dragon;
+				MonsterTeleport(dragonPlayer);
+				dragonClass.setClass(dragonPlayer);
+
+				drills = builder.getDrills();
+				if (drills.containsKey(dragonPlayer.getDisplayName())) {
+					drills.remove(dragonPlayer.getDisplayName());
+				}
+
+				Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
+				Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
+				Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
+				Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
+				Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
+			}
+			random -= 1;
+		}
+	}
+		
+	
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (sender instanceof Player) {
+			Player player = (Player) sender;
+			if (cmd.getName().equalsIgnoreCase("rules")) {
+				player.getInventory().addItem(ruleBook);
+			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("startgame")) {
+				startGameCommand();
+			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("destroyworld")) {
+				destroyWorldCommand();
+			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("buildworld")) {
+				buildWorldCommand();
+			} else if (player.isOp() && cmd.getName().equalsIgnoreCase("spawndragon")) {
+				spawnDragonCommand();
 			}
 		}
 		return true;

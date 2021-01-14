@@ -2,7 +2,7 @@ package plugin.monstersvskingsmen;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
+import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -101,6 +101,22 @@ public class SetUpLobby {
 				counter = 0;
 			} else {
 				counter++;
+			}
+		}
+	}
+		
+	public void assignNobles(MonstersVsKingsmen instance) {
+		int random;
+		for(int i = 0; i < 2; i++) {
+			random = new Random().nextInt(instance.getServer().getOnlinePlayers().size() - 1);
+			for (Player p : Bukkit.getOnlinePlayers()) {
+				if(random <= 0) {
+					if (!nobles.contains(p)) {
+						nobles.add(p);
+						break;
+					}
+				}
+				random -= 1;
 			}
 		}
 	}

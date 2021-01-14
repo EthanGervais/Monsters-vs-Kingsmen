@@ -9,8 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 public class WeaponsmithClass extends PlayerClass {
-	public WeaponsmithClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
-		super(nobles, king, peenut, dmac, zatrick, hottub);
+	public WeaponsmithClass() {
+		super();
 		ItemStack axeStack = new ItemStack(Material.DIAMOND_AXE, 1);
 		ItemStack anvilStack = new ItemStack(Material.ANVIL, 1);
 		ItemStack dyeStack = new ItemStack(Material.WHITE_DYE, 15);
@@ -30,9 +30,9 @@ public class WeaponsmithClass extends PlayerClass {
 		super.setSpawnEgg(Material.SKELETON_HORSE_SPAWN_EGG);
 	}
 	
-	public void setClass(Player player) {
+	public void setClass(Player player, ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
 		super.setPlayer(player);
-		super.giveItems();
+		super.giveItems(nobles, king, peenut, dmac, zatrick, hottub);
 	}
 	
 	public ItemStack infoBook() {

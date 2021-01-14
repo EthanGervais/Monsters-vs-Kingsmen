@@ -12,8 +12,8 @@ import org.bukkit.potion.PotionEffectType;
 
 public class DMacClass extends PlayerClass {
 
-	public DMacClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
-		super(nobles, king, peenut, dmac, zatrick, hottub);
+	public DMacClass() {
+		super();
 
 		ItemStack aoeStack = new ItemStack(Material.END_CRYSTAL, 1);
 		ItemMeta meta = aoeStack.getItemMeta();
@@ -27,9 +27,9 @@ public class DMacClass extends PlayerClass {
 		super.setSpawnEgg(Material.SALMON_SPAWN_EGG);
 	}
 
-	public void setClass(Player player) {
+	public void setClass(Player player, ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
 		super.setPlayer(player);
-		super.giveItems();
+		super.giveItems(nobles, king, peenut, dmac, zatrick, hottub);
 	}
 
 	public void aoeEffect(Player player) {

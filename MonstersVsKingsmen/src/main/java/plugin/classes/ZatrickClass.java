@@ -12,8 +12,8 @@ import org.bukkit.potion.PotionEffectType;
 
 public class ZatrickClass extends PlayerClass {
 
-	public ZatrickClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
-		super(nobles, king, peenut, dmac, zatrick, hottub);
+	public ZatrickClass() {
+		super();
 		ItemStack aoeStack = new ItemStack(Material.CRIMSON_ROOTS, 1);
 		ItemMeta meta = aoeStack.getItemMeta();
 		meta.setDisplayName("Heal");
@@ -26,9 +26,9 @@ public class ZatrickClass extends PlayerClass {
 		super.setSpawnEgg(Material.MOOSHROOM_SPAWN_EGG);
 	}
 
-	public void setClass(Player player) {
+	public void setClass(Player player, ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
 		super.setPlayer(player);
-		super.giveItems();
+		super.giveItems(nobles, king, peenut, dmac, zatrick, hottub);
 	}
 
 	public void needHealing(Player player) {

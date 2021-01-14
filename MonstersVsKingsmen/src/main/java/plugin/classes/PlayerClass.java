@@ -1,10 +1,10 @@
 package plugin.classes;
 
 import java.util.ArrayList;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
 
 public class PlayerClass {
 	private Player player;
@@ -12,22 +12,6 @@ public class PlayerClass {
 	private ItemStack book;
 	private Material egg;
 	private boolean isNoble = false;
-	
-	private ArrayList<Player> nobles;
-	private KingClass king;
-	private PeenutClass peenut;
-	private DMacClass dmac;
-	private ZatrickClass zatrick;
-	private HotTubClass hottub;
-	
-	public PlayerClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
-		this.king = king;
-		this.peenut = peenut;
-		this.dmac = dmac;
-		this.zatrick = zatrick;
-		this.hottub = hottub;
-		this.nobles = nobles;
-	}
 	
 	public void setPlayer(Player newPlayer) {
 		player = newPlayer;
@@ -49,7 +33,7 @@ public class PlayerClass {
 		isNoble = true;
 	}
 	
-	public void giveItems() {
+	public void giveItems(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
 		player.getInventory().remove(egg);
 		for(ItemStack item : items) {
 			player.getInventory().addItem(item);
@@ -58,24 +42,24 @@ public class PlayerClass {
 			player.getInventory().addItem(book);
 		}
 		
-		if(nobles.contains(player)) {
-			assignNoble();
+		if(nobles.contains(player) && !isNoble) {
+			assignNoble(nobles, king, peenut, dmac, zatrick, hottub);
 		}
 	}
 	
-	public void assignNoble() {
+	public void assignNoble(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
 		for (int i = 0; i < nobles.size(); i++) {
 			if (player == nobles.get(i)) {
 				if (i == 0) {
-					king.setPlayer(player);
+					king.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 				} else if (i == 1) {
-					peenut.setPlayer(player);
+					peenut.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 				} else if (i == 2) {
-					dmac.setPlayer(player);
+					dmac.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 				} else if (i == 3) {
-					zatrick.setPlayer(player);
+					zatrick.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 				} else if (i == 4) {
-					hottub.setPlayer(player);
+					hottub.setClass(player, nobles, king, peenut, dmac, zatrick, hottub);
 				}
 			}
 		}

@@ -11,8 +11,8 @@ import org.bukkit.potion.PotionEffectType;
 
 public class HotTubClass extends PlayerClass {
 
-	public HotTubClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
-		super(nobles, king, peenut, dmac, zatrick, hottub);
+	public HotTubClass() {
+		super();
 
 		ItemStack invisStack = new ItemStack(Material.BLAZE_ROD, 1);
 		ItemMeta meta = invisStack.getItemMeta();
@@ -26,9 +26,9 @@ public class HotTubClass extends PlayerClass {
 		super.setSpawnEgg(Material.ENDERMITE_SPAWN_EGG);
 	}
 
-	public void setClass(Player player) {
+	public void setClass(Player player, ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
 		super.setPlayer(player);
-		super.giveItems();
+		super.giveItems(nobles, king, peenut, dmac, zatrick, hottub);
 	}
 
 	public void invisibility(Player player) {

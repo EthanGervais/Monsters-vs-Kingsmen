@@ -13,8 +13,8 @@ import org.bukkit.plugin.Plugin;
 
 public class ArmorsmithClass extends PlayerClass {
 
-	public ArmorsmithClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
-		super(nobles, king, peenut, dmac, zatrick, hottub);
+	public ArmorsmithClass() {
+		super();
 		
 		ItemStack coalStack = new ItemStack(Material.COAL_BLOCK, 128);
 		ItemStack pistonStack = new ItemStack(Material.STICKY_PISTON, 1);
@@ -35,9 +35,9 @@ public class ArmorsmithClass extends PlayerClass {
 		super.setSpawnEgg(Material.OCELOT_SPAWN_EGG);
 	}
 
-	public void setClass(Player player) {
+	public void setClass(Player player, ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
 		super.setPlayer(player);
-		super.giveItems();
+		super.giveItems(nobles, king, peenut, dmac, zatrick, hottub);
 	}
 
 	public void addFurnaceRecipe(Plugin plugin) {

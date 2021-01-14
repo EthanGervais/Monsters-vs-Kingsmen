@@ -11,8 +11,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class PeenutClass extends PlayerClass {
 
-	public PeenutClass(ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
-		super(nobles, king, peenut, dmac, zatrick, hottub);
+	public PeenutClass() {
+		super();
 		ItemStack fireStack = new ItemStack(Material.BLAZE_POWDER, 1);
 		ItemMeta meta = fireStack.getItemMeta();
 		meta.setDisplayName("Flame on!");
@@ -25,9 +25,9 @@ public class PeenutClass extends PlayerClass {
 		super.setSpawnEgg(Material.TURTLE_SPAWN_EGG);
 	}
 
-	public void setClass(Player player) {
+	public void setClass(Player player, ArrayList<Player> nobles, KingClass king, PeenutClass peenut, DMacClass dmac, ZatrickClass zatrick, HotTubClass hottub) {
 		super.setPlayer(player);
-		super.giveItems();
+		super.giveItems(nobles, king, peenut, dmac, zatrick, hottub);
 	}
 
 	public void fireBall(Player player) {
