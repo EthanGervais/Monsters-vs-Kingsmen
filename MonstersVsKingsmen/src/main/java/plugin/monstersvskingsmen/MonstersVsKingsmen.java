@@ -13,6 +13,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.WorldBorder;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.block.Block;
@@ -811,7 +812,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			FileUtils.deleteDirectory(gameWorld);
 			Bukkit.broadcastMessage("[Server]: World destroyed");
 		} catch (IOException e) {
-			Bukkit.broadcastMessage("[Server]: World Could not be destroyed");
+			Bukkit.broadcastMessage("[Server]: World could not be destroyed");
 		}
 		deathCounter = 0;
 		systemReset = true;
@@ -826,6 +827,11 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		setMapCode(wc);
 		wc.createWorld();
 		Bukkit.broadcastMessage("[Server]: World generated");
+		
+		World world = Bukkit.getWorld("MvsK");
+		WorldBorder border = world.getWorldBorder();
+		border.setSize(20);
+		border.setCenter(64.0, -144.0);
 	}
 	
 	public void spawnDragonCommand() {
@@ -871,17 +877,9 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	}
 
 	public void setDragonDeathNumber() {
-		if (instance.getServer().getOnlinePlayers().size() >= 20) {
-			dragonDeathNumber = 8;
-		} else if (instance.getServer().getOnlinePlayers().size() < 20
-				&& instance.getServer().getOnlinePlayers().size() >= 15) {
-			dragonDeathNumber = 5;
-		} else if (instance.getServer().getOnlinePlayers().size() < 15
-				&& instance.getServer().getOnlinePlayers().size() >= 10) {
-			dragonDeathNumber = 3;
-		} else {
-			dragonDeathNumber = 1;
-		}
+		double numPlayers = instance.getServer().getOnlinePlayers().size();
+		numPlayers *= 0.35;
+		dragonDeathNumber = (int)numPlayers + 1;
 	}
 
 	public void makeRuleBook() {

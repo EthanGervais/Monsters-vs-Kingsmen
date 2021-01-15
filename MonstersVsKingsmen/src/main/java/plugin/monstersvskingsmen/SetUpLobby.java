@@ -105,9 +105,19 @@ public class SetUpLobby {
 		}
 	}
 		
+	public int getNumNobles(MonstersVsKingsmen instance) {
+		double numPlayers = instance.getServer().getOnlinePlayers().size();
+		numPlayers /= 5;
+		if (numPlayers < 5) {
+			return (int)numPlayers + 1;
+		} else {
+			return 5;
+		}
+	}
+	
 	public void assignNobles(MonstersVsKingsmen instance) {
 		int random;
-		for(int i = 0; i < 2; i++) {
+		for(int i = 0; i < getNumNobles(instance); i++) {
 			random = new Random().nextInt(instance.getServer().getOnlinePlayers().size() - 1);
 			for (Player p : Bukkit.getOnlinePlayers()) {
 				if(random <= 0) {
