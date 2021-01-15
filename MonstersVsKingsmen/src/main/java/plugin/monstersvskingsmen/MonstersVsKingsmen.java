@@ -63,18 +63,18 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private PeenutClass peenut = new PeenutClass();
 	private DMacClass dmac = new DMacClass();
 	private ZatrickClass zatrick = new ZatrickClass();
-	private HotTubClass hottub = new HotTubClass(); 
+	private HotTubClass hottub = new HotTubClass();
 	private BuilderClass builder = new BuilderClass();
 	private BakerClass baker = new BakerClass();
 	private ArmorsmithClass armorsmith = new ArmorsmithClass();
 	private WeaponsmithClass weaponsmith = new WeaponsmithClass();
 	private TorchmanClass torchman = new TorchmanClass();
-	
+
 	private ZombieClass zombieClass = new ZombieClass();
 	private SkeletonClass skeletonClass = new SkeletonClass();
 	private CreeperClass creeperClass = new CreeperClass();
 	private DragonClass dragonClass = new DragonClass();
-	
+
 	private long kingCooldown = System.currentTimeMillis() / 1000;
 	private long peenutCooldown = System.currentTimeMillis() / 1000;
 	private long dmacCooldown = System.currentTimeMillis() / 1000;
@@ -100,7 +100,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
-		getServer().getPluginManager().registerEvents(this, this);	
+		getServer().getPluginManager().registerEvents(this, this);
 		removeRecipes();
 		baker.addFurnaceRecipe(this);
 		armorsmith.addFurnaceRecipe(this);
@@ -441,20 +441,35 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			player.getInventory().addItem(arrows);
 		}
 
-		if (kingInteractBlock(player, inventory, event)) { return; }
-		else if (peenutInteractBlock(player, inventory, event)) { return; }
-		else if (dmacInteractBlock(player, inventory, event)) { return; }
-		else if (zatrickInteractBlock(player, inventory, event)) { return; }
-		else if (hottubInteractBlock(player, inventory, event)) { return; }
-		else if (builderInteractBlock(player, inventory, event)) { return; }
-		else if (bakerInteractBlock(player, inventory, event)) { return; }
-		else if (armorsmithInteractBlock(player, inventory, event)) { return; }
-		else if (weaponsmithInteractBlock(player, inventory, event)) { return; }
-		else if (torchmanInteractBlock(player, inventory, event)) { return; }
-		else if (zombieInteractBlock(player, inventory, event)) { return; }
-		else if (skeletonInteractBlock(player, inventory, event)) { return; }
-		else if (creeperInteractBlock(player, inventory, event)) { return; }
-		else if (dragonInteractBlock(player, inventory, event)) { return; }
+		if (kingInteractBlock(player, inventory, event)) {
+			return;
+		} else if (peenutInteractBlock(player, inventory, event)) {
+			return;
+		} else if (dmacInteractBlock(player, inventory, event)) {
+			return;
+		} else if (zatrickInteractBlock(player, inventory, event)) {
+			return;
+		} else if (hottubInteractBlock(player, inventory, event)) {
+			return;
+		} else if (builderInteractBlock(player, inventory, event)) {
+			return;
+		} else if (bakerInteractBlock(player, inventory, event)) {
+			return;
+		} else if (armorsmithInteractBlock(player, inventory, event)) {
+			return;
+		} else if (weaponsmithInteractBlock(player, inventory, event)) {
+			return;
+		} else if (torchmanInteractBlock(player, inventory, event)) {
+			return;
+		} else if (zombieInteractBlock(player, inventory, event)) {
+			return;
+		} else if (skeletonInteractBlock(player, inventory, event)) {
+			return;
+		} else if (creeperInteractBlock(player, inventory, event)) {
+			return;
+		} else if (dragonInteractBlock(player, inventory, event)) {
+			return;
+		}
 	}
 
 	@EventHandler
@@ -525,6 +540,10 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			stack.setItemMeta(meta);
 
 			tempLoc.getWorld().dropItemNaturally(tempLoc, stack);
+			event.setCancelled(true);
+		} else if (!event.getPlayer().isOp() && (event.getBlock().getType() == Material.STONE
+				|| event.getBlock().getType() == Material.GRANITE || event.getBlock().getType() == Material.DIORITE
+				|| event.getBlock().getType() == Material.ANDESITE)) { // So players cannot dig down.
 			event.setCancelled(true);
 		}
 	}
@@ -798,7 +817,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			}
 		}, 37000); // 37000 time for 1 1/2 days
 	}
-	
+
 	public void destroyWorldCommand() {
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			p.getInventory().clear();
@@ -818,7 +837,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		systemReset = true;
 		releaseMonsters = false;
 	}
-	
+
 	public void buildWorldCommand() {
 		WorldCreator wc = new WorldCreator("MvsK");
 		wc.environment(World.Environment.NORMAL);
@@ -827,13 +846,13 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		setMapCode(wc);
 		wc.createWorld();
 		Bukkit.broadcastMessage("[Server]: World generated");
-		
+
 		World world = Bukkit.getWorld("MvsK");
 		WorldBorder border = world.getWorldBorder();
 		border.setSize(20);
 		border.setCenter(64.0, -144.0);
 	}
-	
+
 	public void spawnDragonCommand() {
 		int random = new Random().nextInt(instance.getServer().getOnlinePlayers().size() - 1);
 		for (Player dragon : Bukkit.getOnlinePlayers()) {
@@ -856,8 +875,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			random -= 1;
 		}
 	}
-		
-	
+
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
@@ -879,7 +897,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	public void setDragonDeathNumber() {
 		double numPlayers = instance.getServer().getOnlinePlayers().size();
 		numPlayers *= 0.35;
-		dragonDeathNumber = (int)numPlayers + 1;
+		dragonDeathNumber = (int) numPlayers + 1;
 	}
 
 	public void makeRuleBook() {
