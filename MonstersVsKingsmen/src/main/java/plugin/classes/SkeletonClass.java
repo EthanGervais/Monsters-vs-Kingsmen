@@ -15,14 +15,12 @@ public class SkeletonClass extends MonsterClass {
 	public SkeletonClass() {
 		super();
 		ItemStack bowStack = new ItemStack(Material.BOW);
-		ItemStack arrowsStack = new ItemStack(Material.ARROW, 256);
 		ArrayList<ItemStack> items = new ArrayList<ItemStack>();
 		items.add(bowStack);
-		items.add(arrowsStack);
 		super.setItems(items);
 	}
 	
-	public void setClass(Player player) {
+	public void setClass(Player player, boolean buffed) {
 		super.setPlayer(player);
 		super.spawnMonster();
 		
@@ -36,6 +34,12 @@ public class SkeletonClass extends MonsterClass {
 		disguise.setEntity(player);
 		disguise.startDisguise();
 		disguise.setSelfDisguiseVisible(false);
+		
+		if (buffed == true) {
+			for (int i = 0; i < armorStack.length; i++) {
+				armorStack[i].addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
+			}
+		}
 		
 		for (int i = 0; i < armorStack.length; i++) {
 			armorStack[i].addEnchantment(Enchantment.BINDING_CURSE, 1);

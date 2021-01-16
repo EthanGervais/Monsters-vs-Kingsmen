@@ -11,7 +11,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 
 public class ZombieClass extends MonsterClass {
-	
+
 	public ZombieClass() {
 		super();
 		ItemStack swordStack = new ItemStack(Material.IRON_SWORD);
@@ -19,26 +19,33 @@ public class ZombieClass extends MonsterClass {
 		items.add(swordStack);
 		super.setItems(items);
 	}
-	
-	public void setClass(Player player) {
+
+	public void setClass(Player player, boolean buffed) {
 		super.setPlayer(player);
 		super.spawnMonster();
-		
+
 		ItemStack[] armorStack = new ItemStack[4];
 		armorStack[0] = new ItemStack(Material.IRON_BOOTS);
 		armorStack[1] = new ItemStack(Material.IRON_LEGGINGS);
 		armorStack[2] = new ItemStack(Material.IRON_CHESTPLATE);
 		armorStack[3] = new ItemStack(Material.IRON_HELMET);
-		
+
 		MobDisguise disguise = new MobDisguise(DisguiseType.ZOMBIE);
 		disguise.setEntity(player);
 		disguise.startDisguise();
 		disguise.setSelfDisguiseVisible(false);
 		
+		if (buffed == true) {
+			for (int i = 0; i < armorStack.length; i++) {
+				armorStack[i].addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
+			}
+			armorStack[0].addEnchantment(Enchantment.FROST_WALKER, 1); // armorStack[0] is boots
+		}
+
 		for (int i = 0; i < armorStack.length; i++) {
 			armorStack[i].addEnchantment(Enchantment.BINDING_CURSE, 1);
 		}
-		
+
 		player.getInventory().setArmorContents(armorStack);
 	}
 }

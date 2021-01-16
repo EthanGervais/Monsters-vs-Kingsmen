@@ -3,6 +3,7 @@ package plugin.classes;
 import java.util.ArrayList;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -20,12 +21,27 @@ public class CreeperClass extends MonsterClass {
 		super.setItems(items);
 	}
 
-	public void setClass(Player player) {
+	public void setClass(Player player, boolean buffed) {
+		super.setPlayer(player);
+		super.spawnMonster();
+
+		if (buffed == true) {
+			ItemStack[] armorStack = new ItemStack[4];
+			armorStack[0] = new ItemStack(Material.CHAINMAIL_BOOTS);
+			armorStack[1] = new ItemStack(Material.CHAINMAIL_LEGGINGS);
+			armorStack[2] = new ItemStack(Material.CHAINMAIL_CHESTPLATE);
+			armorStack[3] = new ItemStack(Material.CHAINMAIL_HELMET);
+			
+			for (int i = 0; i < armorStack.length; i++) {
+				armorStack[i].addEnchantment(Enchantment.BINDING_CURSE, 1);
+			}
+			
+			player.getInventory().setArmorContents(armorStack);
+		}
+
 		MobDisguise disguise = new MobDisguise(DisguiseType.CREEPER);
 		disguise.setEntity(player);
 		disguise.startDisguise();
 		disguise.setSelfDisguiseVisible(false);
-		super.setPlayer(player);
-		super.spawnMonster();
 	}
 }

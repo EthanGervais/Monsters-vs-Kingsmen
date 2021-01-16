@@ -394,7 +394,6 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				player.getInventory().clear();
 				MonsterTeleport(player);
 				player.setGameMode(GameMode.SURVIVAL);
-				creeperClass.setClass(player);
 				if((double)deathCounter / (double)instance.getServer().getOnlinePlayers().size() < 0.5) {
 					creeperClass.setClass(player, true);
 				}else {
