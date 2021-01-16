@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -18,6 +19,9 @@ import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
+import org.bukkit.boss.BossBar;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
@@ -52,6 +56,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.boss.BarStyle;
 
 import net.md_5.bungee.api.ChatColor;
 import plugin.classes.*;
@@ -87,10 +92,13 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private boolean systemReset = true;
 	private boolean releaseMonsters = false;
 	private boolean dragonActive = false;
-	private int deathCounter = 0;
+	private int deathCounter;
 	private int dragonDeathNumber;
 	private Player dragonPlayer;
 	private ItemStack ruleBook;
+	private boolean last5 = false;
+	
+	private ArrayList<Player> alive = new ArrayList<Player>();
 
 	private Hashtable<String, Drill> drills = new Hashtable<String, Drill>();
 
@@ -348,7 +356,11 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				player.getInventory().clear();
 				MonsterTeleport(player);
 				player.setGameMode(GameMode.SURVIVAL);
-				zombieClass.setClass(player);
+				if((double)deathCounter / (double)instance.getServer().getOnlinePlayers().size() < 0.5) {
+					zombieClass.setClass(player, true);
+				}else {
+					zombieClass.setClass(player, false);
+				}
 			}
 			return true;
 		}
@@ -363,7 +375,11 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				player.getInventory().clear();
 				MonsterTeleport(player);
 				player.setGameMode(GameMode.SURVIVAL);
-				skeletonClass.setClass(player);
+				if((double)deathCounter / (double)instance.getServer().getOnlinePlayers().size() < 0.5) {
+					skeletonClass.setClass(player, true);
+				}else {
+					skeletonClass.setClass(player, false);
+				}
 			}
 			return true;
 		}
@@ -379,6 +395,11 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				MonsterTeleport(player);
 				player.setGameMode(GameMode.SURVIVAL);
 				creeperClass.setClass(player);
+				if((double)deathCounter / (double)instance.getServer().getOnlinePlayers().size() < 0.5) {
+					creeperClass.setClass(player, true);
+				}else {
+					creeperClass.setClass(player, false);
+				}
 			}
 			return true;
 		} else if (inventory.getItemInMainHand().getType() == Material.GUNPOWDER
@@ -441,6 +462,13 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			player.getInventory().addItem(arrows);
 		}
 
+		if(last5 == true) {
+			for(Player p : Bukkit.getOnlinePlayers()) {
+				p.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 10000, 1));
+			}
+			last5 = false;
+		}
+		
 		if (kingInteractBlock(player, inventory, event)) {
 			return;
 		} else if (peenutInteractBlock(player, inventory, event)) {
@@ -690,7 +718,11 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			drills.remove(event.getEntity().getPlayer().getDisplayName());
 		}
 
-		deathCounter++;
+		if(alive.contains(event.getEntity().getPlayer())) {
+			alive.remove(event.getEntity().getPlayer());
+			deathCounter++;
+		}
+		
 		if (deathCounter >= dragonDeathNumber && releaseMonsters == false && dragonActive == true) {
 			releaseMonsters = true;
 			Bukkit.broadcastMessage(ChatColor.DARK_RED + "The monsters have been released.");
@@ -698,6 +730,43 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			dragonPlayer.setHealth(0);
 			dragonPlayer = null;
 			dragonActive = false;
+			
+			BossBar bar = Bukkit.getServer().createBossBar("Time Until Reinforcements", BarColor.WHITE, BarStyle.SEGMENTED_20);
+			bar.addFlag(BarFlag.CREATE_FOG);
+			bar.addFlag(BarFlag.DARKEN_SKY);
+			bar.setProgress(1.0);
+			for (Player p : Bukkit.getOnlinePlayers()) {
+				bar.addPlayer(p);
+			}
+			bar.setVisible(true);
+			Thread thread = new Thread() {
+				public void run() {
+					double totalTime = 300; //1200
+					double timeLeft = totalTime;
+					while(timeLeft > 0) {
+						try {
+							TimeUnit.SECONDS.sleep(1);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						timeLeft -= 1;
+						bar.setProgress(timeLeft / totalTime);
+						
+						if(timeLeft == 150) { //300
+							last5 = true;
+						}
+					}
+					Bukkit.broadcastMessage(ChatColor.GREEN + "**The Kingsmen have won!!!!**");
+					Bukkit.broadcastMessage(ChatColor.GREEN + "**The Kingsmen have won!!!!**");
+					Bukkit.broadcastMessage(ChatColor.GREEN + "**The Kingsmen have won!!!!**");
+					Bukkit.broadcastMessage(ChatColor.GREEN + "**The Kingsmen have won!!!!**");
+					Bukkit.broadcastMessage(ChatColor.GREEN + "**The Kingsmen have won!!!!**");
+					for (Player p : Bukkit.getOnlinePlayers()) {
+						bar.removePlayer(p);
+					}
+				}
+			};
+			thread.start();
 		}
 	}
 
@@ -774,6 +843,12 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		}
 	}
 
+	public void recordAllKingsmen() {
+		for(Player p: Bukkit.getOnlinePlayers()) {
+			alive.add(p);
+		}
+	}
+	
 	public void startGameCommand() {
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			p.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 37000, 1));
@@ -786,6 +861,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		setup.assignNobles(instance);
 		nobles = setup.getNobles();
 		setDragonDeathNumber();
+		recordAllKingsmen();
 		MonstersVsKingsmen.scheduleSyncDelayedTask(new Runnable() {
 			public void run() {
 				int random = new Random().nextInt(instance.getServer().getOnlinePlayers().size() - 1);
@@ -807,18 +883,61 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 						Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
 						Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
 						Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
+						alive.remove(dragonPlayer);
+						deathCounter += 1;
 					}
 					random -= 1;
 				}
 				if (deathCounter > dragonDeathNumber) {
 					releaseMonsters = true;
 					Bukkit.broadcastMessage(ChatColor.DARK_RED + "The monsters have been released.");
+					
+					BossBar bar = Bukkit.getServer().createBossBar("Time Until Reinforcements", BarColor.WHITE, BarStyle.SEGMENTED_20);
+					bar.addFlag(BarFlag.CREATE_FOG);
+					bar.addFlag(BarFlag.DARKEN_SKY);
+					bar.setProgress(1.0);
+					for (Player p : Bukkit.getOnlinePlayers()) {
+						bar.addPlayer(p);
+					}
+					bar.setVisible(true);
+					Thread thread = new Thread() {
+						public void run() {
+							double totalTime = 300; //1200
+							double timeLeft = totalTime;
+							while(timeLeft > 0) {
+								try {
+									TimeUnit.SECONDS.sleep(1);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								timeLeft -= 1;
+								bar.setProgress(timeLeft / totalTime);
+								
+								if(timeLeft == 150) { //300
+									last5 = true;
+								}
+							}
+							Bukkit.broadcastMessage(ChatColor.GREEN + "**The Kingsmen have won!!!!**");
+							Bukkit.broadcastMessage(ChatColor.GREEN + "**The Kingsmen have won!!!!**");
+							Bukkit.broadcastMessage(ChatColor.GREEN + "**The Kingsmen have won!!!!**");
+							Bukkit.broadcastMessage(ChatColor.GREEN + "**The Kingsmen have won!!!!**");
+							Bukkit.broadcastMessage(ChatColor.GREEN + "**The Kingsmen have won!!!!**");
+							for (Player p : Bukkit.getOnlinePlayers()) {
+								bar.removePlayer(p);
+							}
+						}
+					};
+					thread.start();
 				}
 			}
-		}, 37000); // 37000 time for 1 1/2 days
+		}, 500); // 37000 time for 1 1/2 days
 	}
 
 	public void destroyWorldCommand() {
+		deathCounter = 0;
+		systemReset = true;
+		releaseMonsters = false;
+		alive.removeAll(alive);
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			p.getInventory().clear();
 			p.setHealth(0);
@@ -833,9 +952,6 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		} catch (IOException e) {
 			Bukkit.broadcastMessage("[Server]: World could not be destroyed");
 		}
-		deathCounter = 0;
-		systemReset = true;
-		releaseMonsters = false;
 	}
 
 	public void buildWorldCommand() {
@@ -846,11 +962,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		setMapCode(wc);
 		wc.createWorld();
 		Bukkit.broadcastMessage("[Server]: World generated");
-
-		World world = Bukkit.getWorld("MvsK");
-		WorldBorder border = world.getWorldBorder();
-		border.setSize(20);
-		border.setCenter(64.0, -144.0);
+		
+		setMapBorder();
 	}
 
 	public void spawnDragonCommand() {
@@ -871,6 +984,8 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
 				Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
 				Bukkit.broadcastMessage(ChatColor.RED + "**THE DRAGON IS COMING!!**");
+				alive.remove(dragonPlayer);
+				deathCounter += 1;
 			}
 			random -= 1;
 		}
@@ -950,6 +1065,40 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			wc.seed(-737846020L);
 		} else if (mapCode == 5) {
 			wc.seed(7000);
+		}
+	}
+	
+	public void setMapBorder() {
+		if(mapCode == 1) {
+			World world = Bukkit.getWorld("MvsK");
+			WorldBorder border = world.getWorldBorder();
+			border.setSize(100);
+			border.setCenter(54.0, -164.0);
+			border.setDamageAmount(0.0);
+		} else if(mapCode == 2) {
+			World world = Bukkit.getWorld("MvsK");
+			WorldBorder border = world.getWorldBorder();
+			border.setSize(100);
+			border.setCenter(-207.0, -248.0);
+			border.setDamageAmount(0.0);
+		} else if(mapCode == 3) {
+			World world = Bukkit.getWorld("MvsK");
+			WorldBorder border = world.getWorldBorder();
+			border.setSize(100);
+			border.setCenter(185.0, -48.0);
+			border.setDamageAmount(0.0);
+		} else if(mapCode == 4) {
+			World world = Bukkit.getWorld("MvsK");
+			WorldBorder border = world.getWorldBorder();
+			border.setSize(100);
+			border.setCenter(-35.0, -239.0);
+			border.setDamageAmount(0.0);
+		} else if(mapCode == 5) {
+			World world = Bukkit.getWorld("MvsK");
+			WorldBorder border = world.getWorldBorder();
+			border.setSize(100);
+			border.setCenter(-120.0, 234.0);
+			border.setDamageAmount(0.0);
 		}
 	}
 }
