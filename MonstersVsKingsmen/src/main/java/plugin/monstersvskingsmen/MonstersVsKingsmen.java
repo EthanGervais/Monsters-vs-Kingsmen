@@ -44,7 +44,9 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.Inventory;
@@ -97,6 +99,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 	private Player dragonPlayer;
 	private ItemStack ruleBook;
 	private boolean last5 = false;
+	private BossBar bar;
 	
 	private ArrayList<Player> alive = new ArrayList<Player>();
 
@@ -356,7 +359,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				player.getInventory().clear();
 				MonsterTeleport(player);
 				player.setGameMode(GameMode.SURVIVAL);
-				if((double)deathCounter / (double)instance.getServer().getOnlinePlayers().size() < 0.5) {
+				if((double)deathCounter / (double)instance.getServer().getOnlinePlayers().size() < 0.75) {
 					zombieClass.setClass(player, true);
 				}else {
 					zombieClass.setClass(player, false);
@@ -375,7 +378,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				player.getInventory().clear();
 				MonsterTeleport(player);
 				player.setGameMode(GameMode.SURVIVAL);
-				if((double)deathCounter / (double)instance.getServer().getOnlinePlayers().size() < 0.5) {
+				if((double)deathCounter / (double)instance.getServer().getOnlinePlayers().size() < 0.75) {
 					skeletonClass.setClass(player, true);
 				}else {
 					skeletonClass.setClass(player, false);
@@ -394,7 +397,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 				player.getInventory().clear();
 				MonsterTeleport(player);
 				player.setGameMode(GameMode.SURVIVAL);
-				if((double)deathCounter / (double)instance.getServer().getOnlinePlayers().size() < 0.5) {
+				if((double)deathCounter / (double)instance.getServer().getOnlinePlayers().size() < 0.75) {
 					creeperClass.setClass(player, true);
 				}else {
 					creeperClass.setClass(player, false);
@@ -653,6 +656,27 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		}
 	}
 
+	@EventHandler 
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		event.getPlayer().getInventory().clear();
+		event.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0, 5, 0, 180, 0));
+		if (bar != null) {
+			bar.addPlayer(event.getPlayer());
+		}
+		if(!systemReset) {
+			ItemStack spawn = new ItemStack(Material.ZOMBIE_SPAWN_EGG, 1);
+			event.getPlayer().getInventory().addItem(spawn);
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerLeave(PlayerQuitEvent event) {
+		if(alive.contains(event.getPlayer())) {
+			alive.remove(event.getPlayer());
+		}
+		deathCounter += 1;
+	}
+	
 	@EventHandler
 	public void onPlayerMunching(PlayerItemConsumeEvent event) {
 		if (event.getItem().getType() == Material.BREAD) {
@@ -730,7 +754,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 			dragonPlayer = null;
 			dragonActive = false;
 			
-			BossBar bar = Bukkit.getServer().createBossBar("Time Until Reinforcements", BarColor.WHITE, BarStyle.SEGMENTED_20);
+			bar = Bukkit.getServer().createBossBar("Time Until Reinforcements", BarColor.WHITE, BarStyle.SEGMENTED_20);
 			bar.addFlag(BarFlag.CREATE_FOG);
 			bar.addFlag(BarFlag.DARKEN_SKY);
 			bar.setProgress(1.0);
@@ -891,7 +915,7 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 					releaseMonsters = true;
 					Bukkit.broadcastMessage(ChatColor.DARK_RED + "The monsters have been released.");
 					
-					BossBar bar = Bukkit.getServer().createBossBar("Time Until Reinforcements", BarColor.WHITE, BarStyle.SEGMENTED_20);
+					bar = Bukkit.getServer().createBossBar("Time Until Reinforcements", BarColor.WHITE, BarStyle.SEGMENTED_20);
 					bar.addFlag(BarFlag.CREATE_FOG);
 					bar.addFlag(BarFlag.DARKEN_SKY);
 					bar.setProgress(1.0);
@@ -940,6 +964,9 @@ public final class MonstersVsKingsmen extends JavaPlugin implements Listener {
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			p.getInventory().clear();
 			p.setHealth(0);
+			if(bar != null) {
+				bar.removePlayer(p);
+			}
 		}
 		if (Bukkit.getWorld("MvsK") != null) {
 			Bukkit.unloadWorld("MvsK", false);
