@@ -17,4 +17,4 @@ PS running the command `/rules` will provide any player unfamiliar with the game
 
 ## Currently Known Bugs
 
- * Sometimes running `/destroyworld` will not properly delete the world file (This should be ran asynchronously - lag is the reason this breaks sometimes) If this happens, running `/buildworld` will not work properly and will finish instantly without actually generating anything. To fix: run the `/destroyworld` command 2 times one after the other and then build the new world.
+ * Sometimes running `/destroyworld` will not properly delete the world file (this should be ran asynchronously and currently isn't - lag is the reason this breaks sometimes). If this happens, running `/buildworld` will not work properly and will finish instantly without actually generating anything. To fix: run the `/destroyworld` command 2 times one after the other and then build the new world.
