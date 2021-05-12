@@ -5,7 +5,7 @@ Monsters-vs-Kingmen is a roleplaying multiplayer game. The game is simple, durin
 ## Using the Plugin
 
  * Grab the jar file included in the home directory of the project and place it in the plugins folder of your spigot enabled server
- * Spawn into any world as a server lobby
+ * Spawn into any superflat generated world as a server lobby
  * Run the command `/buildworld` as an op and the server will generate a new world for play (this part is usually quite laggy)
  * Once the server announces that world generation is complete, run the command `/startgame` to spawn in class eggs
  * Each player will be given a spawn egg, click on the egg in your inventory to spawn in as that class
