@@ -1,0 +1,3 @@
+# Monsters-vs-Kingsmen
+
+Monsters-vs-Kingmen is a roleplaying multiplayer game. The game is simple, during the set up phase players are assigned classes and resources to prepare for the fight. On the third night, a random player is selected to spawn in as a dragon. Once becoming the dragon, your job is to kill as many other players as possible before you are slain. After the dragon is slain, the dead players will spawn in as monsters of various types. For the rest of the game the mosters try to exterminate the players still alive. If they are successful before the time runs out, the monsters win, otherwise the kingsmen win.
