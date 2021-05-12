@@ -9,7 +9,7 @@ Monsters-vs-Kingmen is a roleplaying multiplayer game. The game is simple, durin
  * Run the command `/buildworld` as an op and the server will generate a new world for play (this part is usually quite laggy)
  * Once the server announces that world generation is complete, run the command `/startgame` to spawn in class eggs
  * Each player will be given a spawn egg, click on the egg in your inventory to spawn in as that class
- * From this point onwards, the game runs by itself and will auto spawn in a dragon and a timer once the dragon is dead
+ * From this point onwards, the game runs by itself and will auto spawn in a dragon after two days and a timer once the dragon is dead
  * When finished playing the game, run the command `/destroyworld` to reset
  * If youd like, run `/buildworld` and then `/startgame` to play again in a newly generated world
 
